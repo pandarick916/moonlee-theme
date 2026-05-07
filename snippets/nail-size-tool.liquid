@@ -1,93 +1,104 @@
-<!-- Nail Size Finder — MOONLEE -->
-<div style="margin:16px 0;">
-  <button onclick="NailFinder.open()" style="background:none;border:1px solid currentColor;padding:8px 16px;font-size:13px;cursor:pointer;letter-spacing:0.05em;width:100%;">📏 Quickly measure fingers</button>
-</div>
-
-<!-- Step 1 Modal -->
-<div id="nf-modal-1" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;">
-  <div id="nf-box-1" style="background:#fff;border-radius:8px;padding:28px 24px;position:relative;box-sizing:border-box;">
-    <button onclick="NailFinder.close()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
-    <p style="margin:0 0 4px;font-size:15px;font-weight:600;">Step 1 — Calibrate Screen</p>
-    <p id="nf-cal-hint" style="margin:0 0 14px;font-size:12px;color:#888;"></p>
-    <div id="nf-card-wrap" style="margin-bottom:4px;display:flex;justify-content:flex-start;">
-      <div id="nf-card-rect" style="background:rgba(91,143,230,0.15);border:2px solid #5b8fe6;border-radius:3px;position:relative;box-sizing:border-box;">
-        <span id="nf-card-label" style="position:absolute;bottom:4px;right:6px;font-size:9px;color:#5b8fe6;"></span>
-      </div>
-    </div>
-    <p id="nf-cal-axis-hint" style="font-size:10px;color:#aaa;margin:0 0 12px;"></p>
-    <label style="font-size:12px;color:#555;">Scale: <strong id="nf-card-scale">100</strong>%</label><br>
-    <input type="range" id="nf-card-slider" min="40" max="200" value="100" step="1" style="width:100%;margin-top:6px;margin-bottom:16px;" oninput="NailFinder.cardSlide(this.value)">
-    <button onclick="NailFinder.confirm()" style="width:100%;padding:10px;background:#333;color:#fff;border:none;font-size:13px;cursor:pointer;border-radius:3px;">✓ Matches My Card — Next</button>
-    <button onclick="NailFinder.skip()" style="width:100%;padding:8px;background:none;border:none;font-size:12px;color:#aaa;cursor:pointer;margin-top:6px;">Skip (less accurate)</button>
-  </div>
-</div>
-
-<!-- Step 2 Modal -->
-<div id="nf-modal-2" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 0;">
-  <div style="background:#fff;padding:24px 20px;max-width:360px;width:92%;position:relative;border-radius:6px;margin:auto;">
-    <button onclick="NailFinder.close()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;">✕</button>
-    <div style="display:flex;gap:8px;margin-bottom:20px;">
-      <div style="flex:1;height:3px;background:#e85d75;border-radius:2px;"></div>
-      <div style="flex:1;height:3px;background:#e85d75;border-radius:2px;"></div>
-    </div>
-    <p style="margin:0 0 4px;font-size:15px;font-weight:600;">Step 2 — Measure Your Nail</p>
-    <p style="margin:0 0 16px;font-size:12px;color:#888;">Place your thumb nail on the ruler. Drag the pink line to match your nail's right edge.</p>
-    <div style="position:relative;height:56px;margin-bottom:12px;">
-      <canvas id="nf-nail-ruler" height="56" style="display:block;width:100%;"></canvas>
-    </div>
-    <div style="margin-bottom:16px;">
-      <label style="font-size:12px;color:#555;">Nail width: <strong id="nf-nail-mm">14</strong> mm</label><br>
-      <input type="range" id="nf-nail-slider" min="8" max="22" value="14" step="0.5" style="width:100%;margin-top:6px;" oninput="NailFinder.nailSlide(this.value)">
-    </div>
-    <!-- 推荐尺寸 -->
-    <div style="background:#fdf6f0;border-radius:8px;padding:14px 16px;margin-bottom:16px;text-align:center;">
-      <div style="font-size:11px;color:#aaa;letter-spacing:0.08em;margin-bottom:4px;">RECOMMENDED SIZE</div>
-      <div id="nf-size-label" style="font-size:2.4rem;font-weight:800;color:#c0665a;line-height:1;">S</div>
-      <div id="nf-size-desc" style="font-size:12px;color:#888;margin-top:4px;">Most common fit</div>
-    </div>
-    <button onclick="NailFinder.back()" style="width:100%;padding:8px;background:none;border:1px solid #ddd;font-size:12px;color:#888;cursor:pointer;border-radius:3px;">← Re-calibrate</button>
-    <p style="font-size:10px;color:#ccc;margin:12px 0 0;text-align:center;">* Accuracy ±0.5mm after calibration</p>
-  </div>
-</div>
-
 <script>
-window.NailFinder = (function () {
-  var _ppmm = null, _cssPPMM = null, _currentScale = 1;
-  var _isMobile = false, _rafCard = null, _rafNail = null, _nailInited = false;
-  var _els = null;
+(function () {
+  var CARD_W_MM = 85.6, CARD_H_MM = 54;
 
   var sizeChart = [
     {s:'XS', min:8,    max:10.4, d:'Petite / Small hands'},
     {s:'S',  min:10.5, max:12.4, d:'Most common fit'},
-    {s:'M',  min:12.5, max:13.4, d:'Average hands ✓ Best seller'},
+    {s:'M',  min:12.5, max:13.4, d:'Average hands \u2713 Best seller'},
     {s:'L',  min:13.5, max:22,   d:'Wider / Larger hands'}
   ];
 
+  // ── 注入 HTML ──────────────────────────────────────
+  var trigger = document.getElementById('nf-trigger');
+  if (!trigger) return;
+
+  trigger.innerHTML = [
+    '<div style="margin:16px 0;">',
+      '<button id="nf-open-btn" style="background:none;border:1px solid #aaa;padding:8px 16px;font-size:13px;cursor:pointer;letter-spacing:0.05em;width:100%;">',
+        '\ud83d\udccf Quickly measure fingers \u2014 on screen, no ruler needed',
+      '</button>',
+    '</div>',
+    '<div id="nf-modal-1" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;">',
+      '<div id="nf-box-1" style="background:#fff;border-radius:8px;padding:28px 24px;position:relative;box-sizing:border-box;will-change:transform;">',
+        '<button id="nf-close-1" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;">\u2715</button>',
+        '<p style="margin:0 0 4px;font-size:15px;font-weight:600;">Step 1 \u2014 Calibrate Screen</p>',
+        '<p id="nf-cal-hint" style="margin:0 0 14px;font-size:12px;color:#888;"></p>',
+        '<div id="nf-card-wrap" style="margin-bottom:4px;display:flex;justify-content:flex-start;">',
+          '<div id="nf-card-rect" style="background:rgba(91,143,230,0.15);border:2px solid #5b8fe6;border-radius:3px;position:relative;box-sizing:border-box;will-change:transform;">',
+            '<span id="nf-card-label" style="position:absolute;bottom:4px;right:6px;font-size:9px;color:#5b8fe6;"></span>',
+          '</div>',
+        '</div>',
+        '<p id="nf-cal-axis-hint" style="font-size:10px;color:#aaa;margin:0 0 12px;"></p>',
+        '<label style="font-size:12px;color:#555;">Scale: <strong id="nf-card-scale">100</strong>%</label><br>',
+        '<input type="range" id="nf-card-slider" min="40" max="200" value="100" step="1" style="width:100%;margin-top:6px;margin-bottom:16px;">',
+        '<button id="nf-confirm-btn" style="width:100%;padding:10px;background:#333;color:#fff;border:none;font-size:13px;cursor:pointer;border-radius:3px;">\u2713 Matches My Card \u2014 Next</button>',
+        '<button id="nf-skip-btn" style="width:100%;padding:8px;background:none;border:none;font-size:12px;color:#aaa;cursor:pointer;margin-top:6px;">Skip (less accurate)</button>',
+      '</div>',
+    '</div>',
+    '<div id="nf-modal-2" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 0;">',
+      '<div style="background:#fff;padding:24px 20px;max-width:360px;width:92%;position:relative;border-radius:6px;margin:auto;">',
+        '<button id="nf-close-2" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;">\u2715</button>',
+        '<div style="display:flex;gap:8px;margin-bottom:20px;">',
+          '<div style="flex:1;height:3px;background:#e85d75;border-radius:2px;"></div>',
+          '<div style="flex:1;height:3px;background:#e85d75;border-radius:2px;"></div>',
+        '</div>',
+        '<p style="margin:0 0 4px;font-size:15px;font-weight:600;">Step 2 \u2014 Measure Your Nail</p>',
+        '<p style="margin:0 0 16px;font-size:12px;color:#888;">Place your thumb nail on the ruler. Drag the pink line to match your nail\'s right edge.</p>',
+        '<div style="position:relative;height:56px;margin-bottom:12px;"><canvas id="nf-nail-ruler" height="56" style="display:block;width:100%;"></canvas></div>',
+        '<div style="margin-bottom:16px;">',
+          '<label style="font-size:12px;color:#555;">Nail width: <strong id="nf-nail-mm">14</strong> mm</label><br>',
+          '<input type="range" id="nf-nail-slider" min="8" max="22" value="14" step="0.5" style="width:100%;margin-top:6px;">',
+        '</div>',
+        '<div style="background:#fdf6f0;border-radius:8px;padding:14px 16px;margin-bottom:16px;text-align:center;">',
+          '<div style="font-size:11px;color:#aaa;letter-spacing:0.08em;margin-bottom:4px;">RECOMMENDED SIZE</div>',
+          '<div id="nf-size-label" style="font-size:2.4rem;font-weight:800;color:#c0665a;line-height:1;">S</div>',
+          '<div id="nf-size-desc" style="font-size:12px;color:#888;margin-top:4px;">Most common fit</div>',
+        '</div>',
+        '<button id="nf-back-btn" style="width:100%;padding:8px;background:none;border:1px solid #ddd;font-size:12px;color:#888;cursor:pointer;border-radius:3px;">\u2190 Re-calibrate</button>',
+        '<p style="font-size:10px;color:#ccc;margin:12px 0 0;text-align:center;">* Accuracy \u00b10.5mm after calibration</p>',
+      '</div>',
+    '</div>'
+  ].join('');
+
+  // ── 变量 ───────────────────────────────────────────
+  var _ppmm = null, _cssPPMM = null, _currentScale = 1;
+  var _isMobile = false, _rafCard = null, _rafNail = null, _nailInited = false;
+
+  // ── 元素绑定 ───────────────────────────────────────
+  var modal1     = document.getElementById('nf-modal-1');
+  var modal2     = document.getElementById('nf-modal-2');
+  var box1       = document.getElementById('nf-box-1');
+  var cardRect   = document.getElementById('nf-card-rect');
+  var cardScale  = document.getElementById('nf-card-scale');
+  var cardSlider = document.getElementById('nf-card-slider');
+  var calHint    = document.getElementById('nf-cal-hint');
+  var cardLabel  = document.getElementById('nf-card-label');
+  var axisHint   = document.getElementById('nf-cal-axis-hint');
+  var nailRuler  = document.getElementById('nf-nail-ruler');
+  var nailMM     = document.getElementById('nf-nail-mm');
+  var nailSlider = document.getElementById('nf-nail-slider');
+  var sizeLabel  = document.getElementById('nf-size-label');
+  var sizeDesc   = document.getElementById('nf-size-desc');
+
+  // ── 事件绑定 ───────────────────────────────────────
+  document.getElementById('nf-open-btn').addEventListener('click', open);
+  document.getElementById('nf-close-1').addEventListener('click', close);
+  document.getElementById('nf-close-2').addEventListener('click', close);
+  document.getElementById('nf-confirm-btn').addEventListener('click', confirm);
+  document.getElementById('nf-skip-btn').addEventListener('click', skip);
+  document.getElementById('nf-back-btn').addEventListener('click', back);
+  cardSlider.addEventListener('input', function(){ cardSlide(this.value); });
+  nailSlider.addEventListener('input', function(){ nailSlide(this.value); });
+  modal1.addEventListener('click', function(e){ if(e.target===modal1) close(); });
+  modal2.addEventListener('click', function(e){ if(e.target===modal2) close(); });
+
+  // ── 工具函数 ───────────────────────────────────────
   function getSize(mm) {
     for (var i = 0; i < sizeChart.length; i++) {
       if (mm >= sizeChart[i].min && mm <= sizeChart[i].max) return sizeChart[i];
     }
     return mm > 22 ? {s:'L+', d:'Contact us for custom sizing'} : sizeChart[0];
-  }
-
-  function els() {
-    if (!_els) _els = {
-      modal1:    document.getElementById('nf-modal-1'),
-      modal2:    document.getElementById('nf-modal-2'),
-      box1:      document.getElementById('nf-box-1'),
-      cardRect:  document.getElementById('nf-card-rect'),
-      cardScale: document.getElementById('nf-card-scale'),
-      cardSlider:document.getElementById('nf-card-slider'),
-      calHint:   document.getElementById('nf-cal-hint'),
-      cardLabel: document.getElementById('nf-card-label'),
-      axisHint:  document.getElementById('nf-cal-axis-hint'),
-      nailRuler: document.getElementById('nf-nail-ruler'),
-      nailMM:    document.getElementById('nf-nail-mm'),
-      nailSlider:document.getElementById('nf-nail-slider'),
-      sizeLabel: document.getElementById('nf-size-label'),
-      sizeDesc:  document.getElementById('nf-size-desc')
-    };
-    return _els;
   }
 
   function getCSSPPMM() {
@@ -101,28 +112,26 @@ window.NailFinder = (function () {
   }
 
   function getSaved() {
-    try { var v = localStorage.getItem('moonlee_ppmm'); return v ? parseFloat(v) : null; }
-    catch(e) { return null; }
+    try { var v = localStorage.getItem('moonlee_ppmm'); return v ? parseFloat(v) : null; } catch(e) { return null; }
   }
 
   function setupCalibrationUI() {
     _isMobile = window.innerWidth < 600;
-    var e = els();
     _currentScale = 1;
-    e.cardSlider.value = 100;
-    e.cardScale.textContent = '100';
+    cardSlider.value = 100;
+    cardScale.textContent = '100';
     if (_isMobile) {
-      e.box1.style.width = '85%';
-      e.cardRect.style.cssText += ';width:60px;height:54mm;transform-origin:top center;transform:scaleY(1);';
-      e.cardLabel.textContent = '54mm';
-      e.calHint.innerHTML = 'Place your credit card <strong>upright</strong> next to the blue bar.<br>Drag until the bar height matches the card\'s short side (54mm).';
-      e.axisHint.textContent = '↕ drag to match card height';
+      box1.style.width = '85%';
+      cardRect.style.cssText += ';width:60px;height:54mm;transform-origin:top center;transform:scaleY(1);';
+      cardLabel.textContent = '54mm';
+      calHint.innerHTML = 'Place your credit card <strong>upright</strong> next to the blue bar.<br>Drag until the bar height matches the card\'s short side (54mm).';
+      axisHint.textContent = '\u2195 drag to match card height';
     } else {
-      e.box1.style.width = '500px';
-      e.cardRect.style.cssText += ';width:85.6mm;height:20mm;transform-origin:left center;transform:scaleX(1);';
-      e.cardLabel.textContent = '85.6mm';
-      e.calHint.innerHTML = 'Place your credit card flat on the blue bar.<br>Drag until the bar width <strong>exactly matches</strong> your card\'s long side (85.6mm).';
-      e.axisHint.textContent = '← drag to match card width →';
+      box1.style.width = '500px';
+      cardRect.style.cssText += ';width:85.6mm;height:20mm;transform-origin:left center;transform:scaleX(1);';
+      cardLabel.textContent = '85.6mm';
+      calHint.innerHTML = 'Place your credit card flat on the blue bar.<br>Drag until the bar width <strong>exactly matches</strong> your card\'s long side (85.6mm).';
+      axisHint.textContent = '\u2190 drag to match card width \u2192';
     }
   }
 
@@ -130,65 +139,62 @@ window.NailFinder = (function () {
     var saved = getSaved();
     if (saved) { _ppmm = saved; showStep2(); } else { showStep1(); }
   }
-  function close() { var e=els(); e.modal1.style.display='none'; e.modal2.style.display='none'; }
-  function showStep1() { var e=els(); e.modal2.style.display='none'; e.modal1.style.display='flex'; setupCalibrationUI(); }
+  function close() { modal1.style.display='none'; modal2.style.display='none'; }
+  function showStep1() { modal2.style.display='none'; modal1.style.display='flex'; setupCalibrationUI(); }
   function showStep2() {
-    var e=els(); e.modal1.style.display='none'; e.modal2.style.display='flex';
+    modal1.style.display='none'; modal2.style.display='flex';
     setTimeout(function(){
-      if(!_nailInited){ e.nailRuler.width=e.nailRuler.parentElement.offsetWidth; _nailInited=true; }
-      drawNail(parseFloat(e.nailSlider.value));
-    },50);
+      if (!_nailInited) { nailRuler.width = nailRuler.parentElement.offsetWidth; _nailInited = true; }
+      drawNail(parseFloat(nailSlider.value));
+    }, 50);
   }
   function cardSlide(val) {
-    _currentScale = parseFloat(val)/100;
-    if(_rafCard) cancelAnimationFrame(_rafCard);
+    _currentScale = parseFloat(val) / 100;
+    if (_rafCard) cancelAnimationFrame(_rafCard);
     _rafCard = requestAnimationFrame(function(){
-      var e=els(); e.cardScale.textContent=val;
-      e.cardRect.style.transform = _isMobile ? 'scaleY('+_currentScale+')' : 'scaleX('+_currentScale+')';
+      cardScale.textContent = val;
+      cardRect.style.transform = _isMobile ? 'scaleY('+_currentScale+')' : 'scaleX('+_currentScale+')';
     });
   }
   function confirm() {
-    var rect=els().cardRect;
-    _ppmm = _isMobile ? (rect.offsetHeight*_currentScale)/54 : (rect.offsetWidth*_currentScale)/85.6;
-    try { localStorage.setItem('moonlee_ppmm',_ppmm); } catch(e){}
+    _ppmm = _isMobile ? (cardRect.offsetHeight * _currentScale) / CARD_H_MM : (cardRect.offsetWidth * _currentScale) / CARD_W_MM;
+    try { localStorage.setItem('moonlee_ppmm', _ppmm); } catch(e) {}
     showStep2();
   }
-  function skip() { _ppmm=getCSSPPMM(); showStep2(); }
+  function skip() { _ppmm = getCSSPPMM(); showStep2(); }
   function back() {
-    try { localStorage.removeItem('moonlee_ppmm'); } catch(e){}
-    _ppmm=null; _nailInited=false; _cssPPMM=null; showStep1();
+    try { localStorage.removeItem('moonlee_ppmm'); } catch(e) {}
+    _ppmm = null; _nailInited = false; _cssPPMM = null; showStep1();
   }
   function drawNail(mm) {
     mm = parseFloat(mm);
-    var e = els();
-    e.nailMM.textContent = mm;
+    nailMM.textContent = mm;
     var s = getSize(mm);
-    e.sizeLabel.textContent = s.s;
-    e.sizeDesc.textContent = s.d;
-    var canvas=e.nailRuler, ctx=canvas.getContext('2d');
-    var ppmm=_ppmm||getCSSPPMM(), w=canvas.width, h=canvas.height;
-    ctx.clearRect(0,0,w,h);
-    ctx.strokeStyle='#eee'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(w,0); ctx.stroke();
-    var showLabels = ppmm*5 >= 28;
-    ctx.strokeStyle='#bbb'; ctx.lineWidth=1;
-    ctx.font='10px sans-serif'; ctx.fillStyle='#999';
-    for(var i=0;i<=22;i++){
-      var x=Math.round(i*ppmm); if(x>w) break;
-      var isFive=i%5===0;
-      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,isFive?22:10); ctx.stroke();
-      if(isFive&&showLabels) ctx.fillText(i+'mm',x+2,34);
+    sizeLabel.textContent = s.s;
+    sizeDesc.textContent = s.d;
+    var ctx = nailRuler.getContext('2d');
+    var ppmm = _ppmm || getCSSPPMM(), w = nailRuler.width, h = nailRuler.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = '#eee'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(w, 0); ctx.stroke();
+    var showLabels = ppmm * 5 >= 28;
+    ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1;
+    ctx.font = '10px sans-serif'; ctx.fillStyle = '#999';
+    for (var i = 0; i <= 22; i++) {
+      var x = Math.round(i * ppmm); if (x > w) break;
+      var isFive = i % 5 === 0;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, isFive ? 22 : 10); ctx.stroke();
+      if (isFive && showLabels) ctx.fillText(i + 'mm', x + 2, 34);
     }
-    var mx=Math.round(mm*ppmm);
-    ctx.strokeStyle='#e85d75'; ctx.lineWidth=2;
-    ctx.beginPath(); ctx.moveTo(mx,0); ctx.lineTo(mx,h); ctx.stroke();
-    ctx.fillStyle='#e85d75';
-    ctx.beginPath(); ctx.moveTo(mx-5,0); ctx.lineTo(mx+5,0); ctx.lineTo(mx,9); ctx.fill();
+    var mx = Math.round(mm * ppmm);
+    ctx.strokeStyle = '#e85d75'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(mx, 0); ctx.lineTo(mx, h); ctx.stroke();
+    ctx.fillStyle = '#e85d75';
+    ctx.beginPath(); ctx.moveTo(mx-5, 0); ctx.lineTo(mx+5, 0); ctx.lineTo(mx, 9); ctx.fill();
   }
   function nailSlide(val) {
-    if(_rafNail) cancelAnimationFrame(_rafNail);
+    if (_rafNail) cancelAnimationFrame(_rafNail);
     _rafNail = requestAnimationFrame(function(){ drawNail(val); });
   }
-  return {open:open,close:close,cardSlide:cardSlide,nailSlide:nailSlide,confirm:confirm,skip:skip,back:back};
 })();
 </script>
