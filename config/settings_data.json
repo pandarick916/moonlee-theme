@@ -91,6 +91,11 @@
         "type": "shopify://apps/apphero-free-gift/blocks/app-embed/775538df-2a18-473b-ada3-d731b074c1a3",
         "disabled": false,
         "settings": {}
+      },
+      "7609861849053656801": {
+        "type": "shopify://apps/orichi-bundle/blocks/volume_discount/831adfc0-6cab-4c9a-9951-63aaa6f4e791",
+        "disabled": false,
+        "settings": {}
       }
     },
     "color_schemes": {
