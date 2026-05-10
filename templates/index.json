@@ -267,6 +267,32 @@
     "marquee_9AMajF": {
       "type": "marquee",
       "blocks": {
+        "text_Xcih8R": {
+          "type": "text",
+          "name": "Free shipping",
+          "settings": {
+            "text": "<p>Free shipping</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "custom",
+            "font": "var(--font-body--family)",
+            "font_size": "0.875rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "uppercase",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
         "text_wyU4km": {
           "type": "text",
           "name": "t:names.text",
@@ -347,6 +373,7 @@
         }
       },
       "block_order": [
+        "text_Xcih8R",
         "text_wyU4km",
         "text_T4hXEg",
         "text_DgwGpn"
@@ -662,6 +689,7 @@
                 },
                 "add-to-cart": {
                   "type": "add-to-cart",
+                  "disabled": true,
                   "static": true,
                   "settings": {
                     "style_class": "button-secondary"
