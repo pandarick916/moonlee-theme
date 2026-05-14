@@ -632,25 +632,13 @@
                 },
                 "accelerated-checkout": {
                   "type": "accelerated-checkout",
+                  "disabled": true,
                   "static": true,
                   "settings": {},
                   "blocks": {}
                 }
               },
               "block_order": []
-            },
-            "payment_icons_TjJYxt": {
-              "type": "payment-icons",
-              "name": "t:names.payment_icons",
-              "settings": {
-                "horizontal_alignment": "flex-start",
-                "gap": 10,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
             },
             "group_r6JGdq": {
               "type": "group",
@@ -854,7 +842,6 @@
           "block_order": [
             "group",
             "buy_buttons",
-            "payment_icons_TjJYxt",
             "group_r6JGdq"
           ]
         }
