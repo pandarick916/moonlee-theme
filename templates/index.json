@@ -281,7 +281,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p><strong>BUY MORE, SAVE MORE — UP TO 40% OFF</strong></p>",
+            "text": "<p>BUY MORE, SAVE MORE - UP TO 40% OFF</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
