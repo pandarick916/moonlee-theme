@@ -14,9 +14,73 @@
     "footer_QAE7jb": {
       "type": "footer",
       "blocks": {
+        "menu_BBz3Bp": {
+          "type": "menu",
+          "name": "t:names.menu",
+          "settings": {
+            "menu": "learn",
+            "heading": "Learn",
+            "menu_spacing": 12,
+            "show_as_accordion": true,
+            "accordion_icon": "caret",
+            "accordion_dividers": false,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "heading_preset": "h4",
+            "link_preset": "paragraph",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "menu_7W8dL9": {
+          "type": "menu",
+          "name": "t:names.menu",
+          "settings": {
+            "menu": "footer",
+            "heading": "Support",
+            "menu_spacing": 12,
+            "show_as_accordion": true,
+            "accordion_icon": "caret",
+            "accordion_dividers": false,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "heading_preset": "h4",
+            "link_preset": "paragraph",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "menu_pbbpRr": {
+          "type": "menu",
+          "name": "t:names.menu",
+          "settings": {
+            "menu": "quick-links",
+            "heading": "Quick Links",
+            "menu_spacing": 12,
+            "show_as_accordion": true,
+            "accordion_icon": "caret",
+            "accordion_dividers": false,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "heading_preset": "h4",
+            "link_preset": "paragraph",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
         "social_links_p7GGfg": {
           "type": "social-links",
           "name": "t:names.social_media_links",
+          "disabled": true,
           "settings": {
             "facebook_url": "",
             "instagram_url": "https://www.instagram.com/moonleehome",
@@ -33,54 +97,13 @@
             "custom_url": "https://medium.com/@moonleehome"
           },
           "blocks": {}
-        },
-        "menu_7W8dL9": {
-          "type": "menu",
-          "name": "t:names.menu",
-          "settings": {
-            "menu": "footer",
-            "heading": "",
-            "menu_spacing": 12,
-            "show_as_accordion": true,
-            "accordion_icon": "caret",
-            "accordion_dividers": false,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
-            "heading_preset": "h5",
-            "link_preset": "paragraph",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
-        "menu_BBz3Bp": {
-          "type": "menu",
-          "name": "t:names.menu",
-          "settings": {
-            "menu": "learn",
-            "heading": "",
-            "menu_spacing": 12,
-            "show_as_accordion": true,
-            "accordion_icon": "caret",
-            "accordion_dividers": false,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
-            "heading_preset": "h5",
-            "link_preset": "paragraph",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
         }
       },
       "block_order": [
-        "social_links_p7GGfg",
+        "menu_BBz3Bp",
         "menu_7W8dL9",
-        "menu_BBz3Bp"
+        "menu_pbbpRr",
+        "social_links_p7GGfg"
       ],
       "name": "t:names.footer",
       "settings": {
@@ -88,7 +111,7 @@
         "gap": 0,
         "color_scheme": "scheme-3",
         "padding-block-start": 8,
-        "padding-block-end": 8
+        "padding-block-end": 16
       }
     },
     "utilities": {
