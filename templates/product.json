@@ -642,9 +642,9 @@
             },
             "custom_liquid_VKiXQd": {
               "type": "custom-liquid",
-              "name": "t:names.custom_liquid",
+              "name": "特别活动说明",
               "settings": {
-                "custom_liquid": "{% assign is_everyday_nails = false %}\n{% for collection in product.collections %}\n  {% if collection.handle == 'everyday-nails' %}\n    {% assign is_everyday_nails = true %}\n    {% break %}\n  {% endif %}\n{% endfor %}\n\n{% unless is_everyday_nails %}\n  <div style=\"\n    background-color: #f5f5f5;\n    border-radius: 8px;\n    padding: 16px 18px;\n    margin: 16px 0;\n    font-size: 13px;\n    line-height: 1.6;\n    color: #424242;\n  \">\n    <div style=\"margin-bottom: 8px;font-weight: bold;\">\n      🎁 Limited-time offer :\n    </div>\n<div>\n       · Includes 2 free everyday sets — don't forget to claim in your cart.\n    </div>\n<div style=\"margin-bottom: 8px;margin-top: 8px;font-weight: bold;\">\n      🎁 Bundle deal (Excluding Everyday Nails) :\n    </div>\n    <div style=\"margin-bottom: 8px;\">\n      · Buy 2, get 15% off\n    </div>\n    <div style=\"margin-bottom: 8px;\">\n       · Buy 3, get 20% off\n    </div>\n    \n  </div>\n{% endunless %}"
+                "custom_liquid": "{% assign is_everyday_nails = false %}\n{% for collection in product.collections %}\n  {% if collection.handle == 'everyday-nails' %}\n    {% assign is_everyday_nails = true %}\n    {% break %}\n  {% endif %}\n{% endfor %}\n\n{% unless is_everyday_nails %}\n  <div style=\"\n    background-color: #f5f5f5;\n    border-radius: 8px;\n    padding: 16px 18px;\n    margin: 16px 0;\n    font-size: 13px;\n    line-height: 1.6;\n    color: #424242;\n  \">\n    <div style=\"margin-bottom: 8px;font-weight: bold;\">\n      🎁 Limited-time offer :\n    </div>\n<div>\n       · Includes 2 free everyday sets — don't forget to claim in your cart.\n    </div>\n<div style=\"margin-bottom: 8px;margin-top: 8px;font-weight: bold;\">\n      ✨ Bundle deal (Excluding Everyday Nails) :\n    </div>\n    <div style=\"margin-bottom: 8px;\">\n      · Buy 2, get 15% off\n    </div>\n    <div style=\"margin-bottom: 8px;\">\n       · Buy 3, get 20% off\n    </div>\n    \n  </div>\n{% endunless %}"
               },
               "blocks": {}
             },
