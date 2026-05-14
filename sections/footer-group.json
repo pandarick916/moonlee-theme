@@ -14,24 +14,23 @@
     "footer_QAE7jb": {
       "type": "footer",
       "blocks": {
-        "menu_BBz3Bp": {
-          "type": "menu",
-          "name": "t:names.menu",
+        "social_links_p7GGfg": {
+          "type": "social-links",
+          "name": "t:names.social_media_links",
           "settings": {
-            "menu": "learn",
-            "heading": "",
-            "menu_spacing": 12,
-            "show_as_accordion": true,
-            "accordion_icon": "caret",
-            "accordion_dividers": false,
-            "inherit_color_scheme": true,
-            "color_scheme": "",
-            "heading_preset": "h5",
-            "link_preset": "paragraph",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
+            "facebook_url": "",
+            "instagram_url": "https://www.instagram.com/moonleehome",
+            "youtube_url": "",
+            "tiktok_url": "https://www.tiktok.com/@moonlee5237",
+            "twitter_url": "",
+            "threads_url": "",
+            "linkedin_url": "",
+            "bluesky_url": "",
+            "snapchat_url": "",
+            "pinterest_url": "https://www.pinterest.com/moonlee0317",
+            "tumblr_url": "",
+            "vimeo_url": "",
+            "custom_url": "https://medium.com/@moonleehome"
           },
           "blocks": {}
         },
@@ -56,31 +55,32 @@
           },
           "blocks": {}
         },
-        "social_links_p7GGfg": {
-          "type": "social-links",
-          "name": "t:names.social_media_links",
+        "menu_BBz3Bp": {
+          "type": "menu",
+          "name": "t:names.menu",
           "settings": {
-            "facebook_url": "",
-            "instagram_url": "https://www.instagram.com/moonleehome",
-            "youtube_url": "",
-            "tiktok_url": "https://www.tiktok.com/@moonlee5237",
-            "twitter_url": "",
-            "threads_url": "",
-            "linkedin_url": "",
-            "bluesky_url": "",
-            "snapchat_url": "",
-            "pinterest_url": "https://www.pinterest.com/moonlee0317",
-            "tumblr_url": "",
-            "vimeo_url": "",
-            "custom_url": "https://medium.com/@moonleehome"
+            "menu": "learn",
+            "heading": "",
+            "menu_spacing": 12,
+            "show_as_accordion": true,
+            "accordion_icon": "caret",
+            "accordion_dividers": false,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "heading_preset": "h5",
+            "link_preset": "paragraph",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {}
         }
       },
       "block_order": [
-        "menu_BBz3Bp",
+        "social_links_p7GGfg",
         "menu_7W8dL9",
-        "social_links_p7GGfg"
+        "menu_BBz3Bp"
       ],
       "name": "t:names.footer",
       "settings": {
