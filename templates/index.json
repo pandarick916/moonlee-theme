@@ -323,7 +323,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p>{{ metaobjects.promotional_content[\"promotional-content-01cbvzi6\"].promotional_content_title.value }}</p>",
+            "text": "<p>{{ metaobjects.promotional_content[\"promotional-content-01cbvzi6\"].promotional_content_title.value }}  ( Save up to $12 )</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
@@ -349,7 +349,7 @@
           "type": "text",
           "name": "t:names.text",
           "settings": {
-            "text": "<p>{{ metaobjects.promotional_content[\"promotional-content-0lgy5m0l\"].promotional_content_title.value }}</p>",
+            "text": "<p>{{ metaobjects.promotional_content[\"promotional-content-0lgy5m0l\"].promotional_content_title.value }} ( Save up to $24 )</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
