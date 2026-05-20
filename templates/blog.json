@@ -45,6 +45,18 @@
             "alignment": "left"
           },
           "blocks": {
+            "image": {
+              "type": "_blog-post-image",
+              "static": true,
+              "settings": {
+                "height": "small",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 50,
+                "border_radius": 0
+              },
+              "blocks": {}
+            },
             "heading": {
               "type": "_heading",
               "name": "t:names.title",
@@ -98,18 +110,6 @@
                 "color": "var(--color-foreground)",
                 "padding-block-start": 16,
                 "padding-block-end": 0
-              },
-              "blocks": {}
-            },
-            "image": {
-              "type": "_blog-post-image",
-              "static": true,
-              "settings": {
-                "height": "small",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 50,
-                "border_radius": 0
               },
               "blocks": {}
             }
