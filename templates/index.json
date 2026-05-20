@@ -407,21 +407,6 @@
         "padding-block-end": 16
       }
     },
-    "divider_3HChnf": {
-      "type": "divider",
-      "custom_css": [],
-      "name": "t:names.divider_section",
-      "settings": {
-        "color_scheme": "",
-        "section_width": "page-width",
-        "thickness": 1,
-        "corner_radius": "square",
-        "width_percent": 100,
-        "alignment_horizontal": "center",
-        "padding-block-start": 16,
-        "padding-block-end": 16
-      }
-    },
     "product_list_8kR3Hb": {
       "type": "product-list",
       "blocks": {
@@ -1003,9 +988,8 @@
   "order": [
     "section_dXUD7b",
     "marquee_9AMajF",
-    "section_LJpqhA",
-    "divider_3HChnf",
     "product_list_8kR3Hb",
+    "section_LJpqhA",
     "1776921947c1cfcdbb",
     "featured_blog_posts_fzjTQ7"
   ]
