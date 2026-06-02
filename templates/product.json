@@ -484,7 +484,7 @@
                       "type": "text",
                       "name": "t:names.text",
                       "settings": {
-                        "text": "<p>No Salon Needed - just peel, press, and shine!</p><ul><li>3-Minute application</li><li>Handmade with premium acrylic</li><li>Reusable up to 5–7 wears</li></ul>",
+                        "text": "<p>Just peel, press, and shine!</p><ul><li>3-Minute application</li><li>Professional-grade acrylic resin</li><li>Reusable up to 5–7 wears (up to 1 month)</li></ul>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
@@ -688,6 +688,81 @@
                 "padding-inline-end": 0
               },
               "blocks": {
+                "accordion_DhqAgK": {
+                  "type": "accordion",
+                  "name": "Your Guarantee",
+                  "settings": {
+                    "icon": "caret",
+                    "dividers": false,
+                    "type_preset": "h6",
+                    "inherit_color_scheme": true,
+                    "color_scheme": "",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "accordion_row_VW8H6G": {
+                      "type": "_accordion-row",
+                      "settings": {
+                        "heading": "Your Guarantee",
+                        "open_by_default": true,
+                        "icon": "none",
+                        "width": 20
+                      },
+                      "blocks": {
+                        "text_wG9Y9c": {
+                          "type": "text",
+                          "settings": {
+                            "text": "<p>✓ Free US Shipping — Always.</p><p>✓ 14-Day Guarantee — No Runaround.</p><p>✓ Buy More, Save More — Up to 40% Off.</p><p>✓ Founder-Inspected Quality.</p>",
+                            "width": "100%",
+                            "max_width": "normal",
+                            "alignment": "left",
+                            "type_preset": "rte",
+                            "font": "var(--font-heading--family)",
+                            "font_size": "0.875rem",
+                            "line_height": "normal",
+                            "letter_spacing": "normal",
+                            "case": "none",
+                            "wrap": "pretty",
+                            "color": "var(--color-foreground)",
+                            "background": false,
+                            "background_color": "#00000026",
+                            "corner_radius": 0,
+                            "padding-block-start": 0,
+                            "padding-block-end": 0,
+                            "padding-inline-start": 0,
+                            "padding-inline-end": 0
+                          },
+                          "blocks": {}
+                        }
+                      },
+                      "block_order": [
+                        "text_wG9Y9c"
+                      ]
+                    }
+                  },
+                  "block_order": [
+                    "accordion_row_VW8H6G"
+                  ]
+                },
+                "divider_7UCb3f": {
+                  "type": "_divider",
+                  "name": "t:names.divider",
+                  "settings": {
+                    "thickness": 1,
+                    "corner_radius": "square",
+                    "width_percent": 100,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0
+                  },
+                  "blocks": {}
+                },
                 "accordion_kytfU9": {
                   "type": "accordion",
                   "name": "What's Included",
@@ -719,7 +794,7 @@
                         "text_xU6jpW": {
                           "type": "text",
                           "settings": {
-                            "text": "<ul><li>Statement set - Handmade 10 pcs / Everyday set - 24/30 pcs </li><li>Multiple sets of JellyTabs (strong-hold, damage-free adhesive)</li><li>Mini File & Cuticle Stick</li></ul>",
+                            "text": "<ul><li>Statement set - Handmade 10 pcs / Everyday set - 24/30 pcs </li><li>Consumer-Grade Ultra-Adhesive JellyTabs — strong hold, zero nail damage</li><li>Mini File & Cuticle Stick</li></ul>",
                             "width": "100%",
                             "max_width": "normal",
                             "alignment": "left",
@@ -840,6 +915,8 @@
                 }
               },
               "block_order": [
+                "accordion_DhqAgK",
+                "divider_7UCb3f",
                 "accordion_kytfU9",
                 "divider_tHkUzM",
                 "accordion_w8gCUb",
