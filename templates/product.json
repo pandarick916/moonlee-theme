@@ -640,11 +640,190 @@
               },
               "block_order": []
             },
+            "product_recommendations_fVDGDr": {
+              "type": "product-recommendations",
+              "name": "t:names.product_recommendations",
+              "disabled": true,
+              "settings": {
+                "recommendation_type": "related",
+                "layout_type": "grid",
+                "carousel_on_mobile": false,
+                "max_products": 4,
+                "columns_gap": 16,
+                "rows_gap": 16,
+                "icons_style": "arrow",
+                "icons_shape": "none",
+                "gap": 12,
+                "border_radius": 0,
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {
+                "text_DN46wN": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p><strong>Up to 40% OFF Multi-Sets - Buy More, Save More</strong></p>",
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "color": "var(--color-foreground)",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "static-product-card": {
+                  "type": "_product-card",
+                  "static": true,
+                  "settings": {
+                    "product_card_gap": 4,
+                    "inherit_color_scheme": true,
+                    "color_scheme": "",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {
+                    "product_card_gallery_Hmhfbq": {
+                      "type": "_product-card-gallery",
+                      "settings": {
+                        "image_ratio": "square",
+                        "border": "none",
+                        "border_width": 1,
+                        "border_opacity": 100,
+                        "border_radius": 0,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    },
+                    "product_title_dxyNk9": {
+                      "type": "product-title",
+                      "name": "t:names.product_title",
+                      "settings": {
+                        "width": "fit-content",
+                        "max_width": "normal",
+                        "alignment": "left",
+                        "type_preset": "paragraph",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "wrap": "pretty",
+                        "color": "var(--color-foreground)",
+                        "background": false,
+                        "background_color": "#00000026",
+                        "corner_radius": 0,
+                        "padding-block-start": 4,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    },
+                    "price_bjKcQh": {
+                      "type": "price",
+                      "name": "t:names.product_price",
+                      "settings": {
+                        "show_sale_price_first": true,
+                        "show_installments": false,
+                        "show_tax_info": false,
+                        "type_preset": "h6",
+                        "width": "100%",
+                        "alignment": "left",
+                        "font": "var(--font-body--family)",
+                        "font_size": "1rem",
+                        "line_height": "normal",
+                        "letter_spacing": "normal",
+                        "case": "none",
+                        "color": "var(--color-foreground)",
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {}
+                    },
+                    "buy_buttons_hFYzLN": {
+                      "type": "buy-buttons",
+                      "name": "t:names.product_buy_buttons",
+                      "settings": {
+                        "stacking": false,
+                        "show_pickup_availability": true,
+                        "gift_card_form": true,
+                        "padding-block-start": 0,
+                        "padding-block-end": 0,
+                        "padding-inline-start": 0,
+                        "padding-inline-end": 0
+                      },
+                      "blocks": {
+                        "quantity": {
+                          "type": "quantity",
+                          "disabled": true,
+                          "static": true,
+                          "settings": {},
+                          "blocks": {}
+                        },
+                        "add-to-cart": {
+                          "type": "add-to-cart",
+                          "static": true,
+                          "settings": {
+                            "style_class": "button-secondary"
+                          },
+                          "blocks": {}
+                        },
+                        "accelerated-checkout": {
+                          "type": "accelerated-checkout",
+                          "disabled": true,
+                          "static": true,
+                          "settings": {},
+                          "blocks": {}
+                        }
+                      },
+                      "block_order": []
+                    }
+                  },
+                  "block_order": [
+                    "product_card_gallery_Hmhfbq",
+                    "product_title_dxyNk9",
+                    "price_bjKcQh",
+                    "buy_buttons_hFYzLN"
+                  ]
+                }
+              },
+              "block_order": [
+                "text_DN46wN"
+              ]
+            },
             "custom_liquid_VKiXQd": {
               "type": "custom-liquid",
               "name": "特别活动说明",
               "settings": {
-                "custom_liquid": "{% assign is_everyday_nails = false %}\n{% for collection in product.collections %}\n  {% if collection.handle == 'everyday-nails' %}\n    {% assign is_everyday_nails = true %}\n    {% break %}\n  {% endif %}\n{% endfor %}\n\n{% unless is_everyday_nails %}\n  <div style=\"\n    background-color: #f5f5f5;\n    border-radius: 8px;\n    padding: 16px 18px;\n    margin: 16px 0;\n    font-size: 13px;\n    line-height: 1.6;\n    color: #424242;\n  \">\n    <div style=\"margin-bottom: 8px;font-weight: bold;\">\n      🎁 Limited-time offer :\n    </div>\n<div>\n       · Includes 2 free everyday sets per order — don't forget to claim in your cart.\n    </div>\n<div style=\"margin-bottom: 8px;margin-top: 8px;font-weight: bold;\">\n      ✨ Bundle deal (Excluding Everyday Nails) :\n    </div>\n    <div style=\"margin-bottom: 8px;\">\n      · Buy 2, get 15% off\n    </div>\n    <div style=\"margin-bottom: 8px;\">\n       · Buy 3, get 20% off\n    </div>\n<div style=\"margin-bottom: 8px;\">\n       · Buy 4, get 30% off\n    </div>\n<div style=\"margin-bottom: 8px;\">\n       · Buy 5, get 40% off\n    </div>\n    \n  </div>\n{% endunless %}"
+                "custom_liquid": "{% assign is_everyday_nails = false %}\n{% for collection in product.collections %}\n  {% if collection.handle == 'everyday-nails' %}\n    {% assign is_everyday_nails = true %}\n    {% break %}\n  {% endif %}\n{% endfor %}\n\n{% unless is_everyday_nails %}\n  <div style=\"\n    background-color: #f5f5f5;\n    border-radius: 8px;\n    padding: 16px 18px;\n    margin: 16px 0;\n    font-size: 13px;\n    line-height: 1.6;\n    color: #424242;\n  \">\n    <div style=\"margin-bottom: 8px;font-weight: bold;\">\n      🎁 Limited-time offer :\n    </div>\n<div style=\"color: red; font-weight: bold;\">\n       · Your free gift is waiting in your cart — Don't forget to claim.\n    </div>\n<div style=\"margin-bottom: 8px;margin-top: 8px;font-weight: bold;\">\n      ✨ Bundle deal (Excluding Everyday Nails) :\n    </div>\n    <div style=\"margin-bottom: 8px;\">\n      · Buy 2, get 15% off\n    </div>\n    <div style=\"margin-bottom: 8px;\">\n       · Buy 3, get 20% off\n    </div>\n<div style=\"margin-bottom: 8px;\">\n       · Buy 4, get 30% off\n    </div>\n<div style=\"margin-bottom: 8px;\">\n       · Buy 5, get 40% off\n    </div>\n    \n  </div>\n{% endunless %}"
               },
               "blocks": {}
             },
@@ -927,6 +1106,7 @@
           "block_order": [
             "group",
             "buy_buttons",
+            "product_recommendations_fVDGDr",
             "custom_liquid_VKiXQd",
             "group_r6JGdq"
           ]
