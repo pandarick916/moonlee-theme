@@ -631,6 +631,14 @@
                 "group_TnKLCG"
               ]
             },
+            "custom_liquid_3HYNrd": {
+              "type": "custom-liquid",
+              "name": "t:names.custom_liquid",
+              "settings": {
+                "custom_liquid": "<div class=\"essential-upsell-frequently-bought-together-block\"></div>"
+              },
+              "blocks": {}
+            },
             "buy_buttons": {
               "type": "buy-buttons",
               "settings": {
@@ -666,6 +674,14 @@
                 }
               },
               "block_order": []
+            },
+            "custom_liquid_LqNTz7": {
+              "type": "custom-liquid",
+              "name": "t:names.custom_liquid",
+              "settings": {
+                "custom_liquid": "<div class=\"essential-upsell-frequently-bought-together-block\"></div>"
+              },
+              "blocks": {}
             },
             "product_recommendations_fVDGDr": {
               "type": "product-recommendations",
@@ -1132,7 +1148,9 @@
           },
           "block_order": [
             "group",
+            "custom_liquid_3HYNrd",
             "buy_buttons",
+            "custom_liquid_LqNTz7",
             "product_recommendations_fVDGDr",
             "custom_liquid_VKiXQd",
             "group_r6JGdq"
