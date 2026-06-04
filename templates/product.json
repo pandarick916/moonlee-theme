@@ -633,14 +633,6 @@
             },
             "custom_liquid_3HYNrd": {
               "type": "custom-liquid",
-              "name": "t:names.custom_liquid",
-              "settings": {
-                "custom_liquid": "<div class=\"essential-upsell-frequently-bought-together-block\"></div>"
-              },
-              "blocks": {}
-            },
-            "custom_liquid_LqNTz7": {
-              "type": "custom-liquid",
               "name": "Bundle选项",
               "settings": {
                 "custom_liquid": "<div class=\"essential-upsell-frequently-bought-together-block\"></div>"
@@ -1149,7 +1141,6 @@
           "block_order": [
             "group",
             "custom_liquid_3HYNrd",
-            "custom_liquid_LqNTz7",
             "buy_buttons",
             "product_recommendations_fVDGDr",
             "custom_liquid_VKiXQd",
