@@ -259,7 +259,7 @@
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
-            "type_preset": "custom",
+            "type_preset": "paragraph",
             "font": "var(--font-body--family)",
             "font_size": "0.875rem",
             "line_height": "normal",
@@ -707,7 +707,7 @@
         "gap": 24,
         "color_scheme": "scheme-1",
         "padding-block-start": 16,
-        "padding-block-end": 18
+        "padding-block-end": 6
       }
     },
     "section_LJpqhA": {
@@ -720,7 +720,7 @@
             "text": "<p>Get 10% off on your first subscription</p>",
             "width": "100%",
             "max_width": "normal",
-            "alignment": "center",
+            "alignment": "left",
             "type_preset": "h4",
             "font": "var(--font-body--family)",
             "font_size": "1rem",

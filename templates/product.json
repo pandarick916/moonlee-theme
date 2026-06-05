@@ -374,7 +374,7 @@
                       "type": "text",
                       "name": "t:names.text",
                       "settings": {
-                        "text": "<p><strong>Free shipping</strong></p>",
+                        "text": "<p>Free shipping</p>",
                         "width": "fit-content",
                         "max_width": "normal",
                         "alignment": "left",
@@ -400,7 +400,7 @@
                       "type": "text",
                       "name": "t:names.text",
                       "settings": {
-                        "text": "<p><strong>Estimated delivery: 7–12 business days (US)</strong></p>",
+                        "text": "<p>Estimated delivery: 7–12 business days (US)</p>",
                         "width": "fit-content",
                         "max_width": "normal",
                         "alignment": "left",

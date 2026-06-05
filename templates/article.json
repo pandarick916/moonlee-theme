@@ -73,7 +73,7 @@
             "inherit_color_scheme": false,
             "color_scheme": "scheme-1",
             "heading": "10% discount for first subscription",
-            "heading_preset": "h6",
+            "heading_preset": "h3",
             "border_style": "all",
             "border_width": 1,
             "border_radius": 19,
