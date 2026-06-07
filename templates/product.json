@@ -511,7 +511,7 @@
                       "type": "text",
                       "name": "t:names.text",
                       "settings": {
-                        "text": "<p>Just peel, press, and shine!</p><ul><li>3-Minute application</li><li>Professional-grade acrylic resin</li><li>Reusable up to 5–7 wears (up to 1 month)</li><li>Only $6 per wear</li></ul>",
+                        "text": "<p>Just peel, press, and shine!</p><ul><li>3-Minute application</li><li>Professional-grade acrylic resin</li><li>Reusable up to 5–7 wears (up to 1 month)</li></ul>",
                         "width": "100%",
                         "max_width": "normal",
                         "alignment": "left",
