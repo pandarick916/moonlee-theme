@@ -374,7 +374,7 @@
                       "type": "text",
                       "name": "t:names.text",
                       "settings": {
-                        "text": "<p>Free shipping</p>",
+                        "text": "<p>Free shipping, no minimum</p>",
                         "width": "fit-content",
                         "max_width": "normal",
                         "alignment": "left",

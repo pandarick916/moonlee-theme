@@ -240,7 +240,7 @@
           "type": "text",
           "name": "Free shipping",
           "settings": {
-            "text": "<p>Free shipping</p>",
+            "text": "<p>Free shipping, no minimum</p>",
             "width": "fit-content",
             "max_width": "normal",
             "alignment": "left",
