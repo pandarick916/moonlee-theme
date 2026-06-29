@@ -1,3 +1,4 @@
+{% comment %}full-cache-bust-20260624{% endcomment %}
 <!doctype html>
 <html
   {% if request.design_mode %}
@@ -25,6 +26,7 @@
 {% endif %}
 {% endcomment %}
 
+    <!-- THEME_COMPILE_CHECK_v1 -->
     {%- render 'meta-tags' -%}
     {%- if request.page_type == 'index' -%}
     <link
@@ -45,7 +47,7 @@
       {%- render 'theme-editor' -%}
     {% endif %}
 
-    {%- if tinyscript -%}{{ content_for_header }}{%- else -%}{% render 'tiny-script-control' %}{%- endif -%}
+    {{ content_for_header }}
     <meta name="p:domain_verify" content="4c4967b27ef208d57c8670a4100d609a"/>
     <meta name="google-site-verification" content="CaKP_-JXhRiZTwZEnUjfh-Ahq9Pov_RiLRxEPxClels" />
     <script type="application/ld+json">
@@ -59,7 +61,7 @@
       "foundingDate": "2025",
       "contactPoint": {
         "@type": "ContactPoint",
-        "email": "pandaricklehe@gmail.com",
+        "email": "info@moonleehome.com",
         "contactType": "customer service",
         "availableLanguage": ["English", "Chinese"]
       },

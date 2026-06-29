@@ -27,6 +27,8 @@
     {% render 'spacing-style', settings: settings %}
     {% render 'size-style', settings: settings %}
     {{ style }}
+    {% if request.page_type == 'article' %}max-width: var(--normal-content-width); margin-left: auto; margin-right: auto;{% endif %}
+
   "
   {{ shopify_attributes }}
   data-testid="group-block"

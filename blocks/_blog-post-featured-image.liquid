@@ -20,7 +20,9 @@
     {% endcase %};
     {% render 'size-style', settings: block_settings %}
     {% render 'spacing-style', settings: block_settings %}
+    max-width: var(--normal-content-width); margin-left: auto; margin-right: auto;
   "
+
   {{ block.shopify_attributes }}
 >
   {%- capture image_border_style -%}

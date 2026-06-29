@@ -18,15 +18,15 @@
           "type": "menu",
           "name": "t:names.menu",
           "settings": {
-            "menu": "learn",
-            "heading": "",
+            "menu": "academy",
+            "heading": "Academy",
             "menu_spacing": 12,
             "show_as_accordion": true,
             "accordion_icon": "caret",
             "accordion_dividers": false,
             "inherit_color_scheme": true,
             "color_scheme": "",
-            "heading_preset": "h5",
+            "heading_preset": "h4",
             "link_preset": "paragraph",
             "padding-block-start": 0,
             "padding-block-end": 0,
@@ -40,14 +40,14 @@
           "name": "t:names.menu",
           "settings": {
             "menu": "footer",
-            "heading": "",
+            "heading": "Support",
             "menu_spacing": 12,
             "show_as_accordion": true,
             "accordion_icon": "caret",
             "accordion_dividers": false,
             "inherit_color_scheme": true,
             "color_scheme": "",
-            "heading_preset": "h5",
+            "heading_preset": "h4",
             "link_preset": "paragraph",
             "padding-block-start": 0,
             "padding-block-end": 0,
@@ -55,11 +55,147 @@
             "padding-inline-end": 0
           },
           "blocks": {}
+        },
+        "menu_pbbpRr": {
+          "type": "menu",
+          "name": "t:names.menu",
+          "settings": {
+            "menu": "quick-links",
+            "heading": "Quick Links",
+            "menu_spacing": 12,
+            "show_as_accordion": true,
+            "accordion_icon": "caret",
+            "accordion_dividers": false,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "heading_preset": "h4",
+            "link_preset": "paragraph",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "group_LJfFpF": {
+          "type": "group",
+          "name": "社交媒体",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 8,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "menu_79Mdbz": {
+              "type": "menu",
+              "name": "t:names.menu",
+              "settings": {
+                "menu": "",
+                "heading": "Social Media",
+                "menu_spacing": 12,
+                "show_as_accordion": false,
+                "accordion_icon": "caret",
+                "accordion_dividers": false,
+                "inherit_color_scheme": true,
+                "color_scheme": "",
+                "heading_preset": "h4",
+                "link_preset": "paragraph",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "social_links_6eMQXr": {
+              "type": "social-links",
+              "name": "t:names.social_media_links",
+              "settings": {
+                "facebook_url": "",
+                "instagram_url": "https://www.instagram.com/moonleehome",
+                "youtube_url": "",
+                "tiktok_url": "https://www.tiktok.com/@moonlee5237",
+                "twitter_url": "",
+                "threads_url": "",
+                "linkedin_url": "",
+                "bluesky_url": "",
+                "snapchat_url": "",
+                "pinterest_url": "https://www.pinterest.com/moonlee0317",
+                "tumblr_url": "",
+                "vimeo_url": "",
+                "custom_url": "https://medium.com/@moonleehome"
+              },
+              "blocks": {}
+            },
+            "follow_on_shop_nAmFVN": {
+              "type": "follow-on-shop",
+              "name": "t:names.follow_on_shop",
+              "settings": {
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "payment_icons_eUwtwr": {
+              "type": "payment-icons",
+              "name": "t:names.payment_icons",
+              "settings": {
+                "horizontal_alignment": "flex-start",
+                "gap": 10,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "menu_79Mdbz",
+            "social_links_6eMQXr",
+            "follow_on_shop_nAmFVN",
+            "payment_icons_eUwtwr"
+          ]
         }
       },
       "block_order": [
         "menu_BBz3Bp",
-        "menu_7W8dL9"
+        "menu_7W8dL9",
+        "menu_pbbpRr",
+        "group_LJfFpF"
       ],
       "name": "t:names.footer",
       "settings": {
@@ -67,7 +203,7 @@
         "gap": 0,
         "color_scheme": "scheme-3",
         "padding-block-start": 8,
-        "padding-block-end": 8
+        "padding-block-end": 16
       }
     },
     "utilities": {

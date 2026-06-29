@@ -46,7 +46,9 @@ class HeaderMenu extends Component {
 
 
   #overflowSubmenuListener = () => {
-    this.#deactivate();
+    this.#deactivateTimer = setTimeout(() => {
+      this.#deactivate();
+    }, 150);
   };
 
   /**
@@ -55,6 +57,7 @@ class HeaderMenu extends Component {
   #state = {
     activeItem: null,
   };
+  #deactivateTimer = null;
 
   /**
    * Get the overflow menu
@@ -80,6 +83,7 @@ class HeaderMenu extends Component {
    * @param {PointerEvent | FocusEvent} event
    */
   activate = (event) => {
+    clearTimeout(this.#deactivateTimer); 
     this.dispatchEvent(new MegaMenuHoverEvent());
 
     if (!(event.target instanceof Element) || !this.headerComponent) return;
@@ -177,8 +181,11 @@ class HeaderMenu extends Component {
 
     if (isMovingWithinMenu || isMovingToOverflowMenu || isMovingToSubmenu) return;
 
-    this.#deactivate();
+    this.#deactivateTimer = setTimeout(() => {
+      this.#deactivate();
+    }, 150);
   }
+
 
   /**
    * Deactivate the active item immediately
@@ -296,3 +303,27 @@ function findSubmenu(element) {
   const submenu = element?.parentElement?.querySelector('[ref="submenu[]"]');
   return submenu instanceof HTMLElement ? submenu : null;
 }
+
+// 确保在组件定义好之后再进行拦截
+customElements.whenDefined('header-menu').then(() => {
+  const HeaderMenuClass = customElements.get('header-menu');
+  if (!HeaderMenuClass) return;
+
+  // 1. 备份原生的打开和关闭属性控制逻辑
+  const originalSetActive = HeaderMenuClass.prototype.setActive;
+  const originalDeactivate = HeaderMenuClass.prototype.deactivate;
+
+  // 2. 拦截关闭动作：只要鼠标在盒模型里，一票否决关闭
+  HeaderMenuClass.prototype.deactivate = function(...args) {
+    if (this.matches(':hover') || this.querySelector('.header__submenu')?.matches(':hover')) {
+      return; // 鼠标在，不准关
+    }
+    if (originalDeactivate) originalDeactivate.apply(this, args);
+  };
+
+  // 3. 增强打开动作：确保触发时状态完全同步，防止闪现
+  HeaderMenuClass.prototype.setActive = function(...args) {
+    if (originalSetActive) originalSetActive.apply(this, args);
+  };
+});
+

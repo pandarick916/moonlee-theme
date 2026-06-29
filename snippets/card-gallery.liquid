@@ -1,3 +1,4 @@
+{% comment %}cache-bust-20260624-1{% endcomment %}
 {%- doc -%}
   Displays product images in a carousel.
   Settings allow for a full slideshow, showing only the first image, or showing the second image when hovering.
@@ -95,7 +96,7 @@
       assign media_list_to_show = product.featured_media | concat: other_media
 
       if product.media.size > 2 and generic_media_size > 0
-        assign show_arrows = true
+        assign show_arrows = false
       endif
 
       # Don't overfetch media if we don't need to
@@ -130,7 +131,8 @@
           unless hidden
             assign visible_slide_count = visible_slide_count | plus: 1
           endunless
-          if hidden == false and visible_slide_count > max_visible_slide_count
+          # Stop rendering after the first image regardless of hidden status
+          if forloop.index0 > 0
             continue
           endif
 
@@ -145,7 +147,7 @@
           endif
 
           capture slideshow_children
-            render 'product-media', media: media, sizes: sizes, loading: loading, preview_image_only: true
+            render 'product-media', media: media, sizes: sizes, loading: loading, preview_image_only: true, widths: '240, 320, 420, 540'
           endcapture
 
           render 'slideshow-slide', slide_id: media.id, index: forloop.index0, hidden: hidden, class: class, attributes: attributes, children: slideshow_children, media_fit: media_fit
@@ -153,7 +155,7 @@
       endcapture
 
       assign slideshow_attributes = 'data-generic-media-size="[generic_media_size]"' | replace: '[generic_media_size]', generic_media_size
-      if settings.product_card_carousel == false
+      if settings.product_card_carousel != true
         assign slideshow_attributes = slideshow_attributes | append: ' disabled="true"'
       endif
     %}
@@ -167,7 +169,7 @@
         ref: 'slideshow',
         initial_slide: 0,
         slides: slides,
-        slide_count: media_list_to_show.size,
+        slide_count: 1,
         show_arrows: show_arrows,
         attributes: slideshow_attributes
       %}
