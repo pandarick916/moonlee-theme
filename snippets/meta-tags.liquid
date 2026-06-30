@@ -128,6 +128,7 @@
     ]
     {%- endif -%}
   }
+  ,"keywords": {{ product.tags | join: ', ' | json }}
   {%- comment -%}
     material: Shopify native field (shopify.material) preferred; fall back to custom namespace.
     Returns just the value (handles both list and single-line types).
