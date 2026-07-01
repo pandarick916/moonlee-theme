@@ -1,0 +1,756 @@
+{% doc %}
+  @prompt
+    一个交互式的前后对比图片滑块。它应显示 2 张我店铺内产品的图片，一张不带甲片，一张是我店铺内带甲片的图片，可以通过拖动滑块进行比较。同时我希望能够有多行文本可以设置叠加在这前后两张图片上，可以调整文本字体样式大小等, 你这个滑块图标的样式不清晰，左右小箭头比较好, 我还想在这个空间上独立一个图层去叠加多行文本，这个多行文本可以自由任意调整字体和字体，甚至可以制作我店铺的Banner标题
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-before-after-slider-{{ ai_gen_id }} {
+    display: block;
+    position: relative;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+    user-select: none;
+    touch-action: pan-y;
+  }
+
+  .ai-before-after-container-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: {{ block.settings.aspect_ratio }}%;
+    overflow: hidden;
+  }
+
+  .ai-before-after-image-wrapper-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ai-before-after-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-before-after-after-wrapper-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .ai-before-after-slider-handle-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: {{ block.settings.slider_color }};
+    cursor: ew-resize;
+    z-index: 10;
+    transform: translateX(-50%);
+  }
+
+  .ai-before-after-slider-button-{{ ai_gen_id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: {{ block.settings.slider_button_size }}px;
+    height: {{ block.settings.slider_button_size }}px;
+    background-color: {{ block.settings.slider_color }};
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .ai-before-after-slider-arrows-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .ai-before-after-slider-button-{{ ai_gen_id }} svg {
+    width: 12px;
+    height: 12px;
+    stroke: {{ block.settings.slider_icon_color }};
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ai-before-after-text-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    z-index: 5;
+    padding: {{ block.settings.text_padding }}px;
+    background-color: {{ block.settings.text_background_color }};
+    border-radius: {{ block.settings.text_border_radius }}px;
+    pointer-events: none;
+  }
+
+  .ai-before-after-text-overlay-{{ ai_gen_id }} p {
+    margin: 0;
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.text_size }}px;
+    font-weight: {{ block.settings.text_weight }};
+    text-align: {{ block.settings.text_align }};
+    line-height: 1.4;
+  }
+
+  .ai-before-after-before-text-{{ ai_gen_id }} {
+    top: {{ block.settings.before_text_top }}%;
+    left: {{ block.settings.before_text_left }}%;
+    transform: translate(-50%, -50%);
+  }
+
+  .ai-before-after-after-text-{{ ai_gen_id }} {
+    top: {{ block.settings.after_text_top }}%;
+    left: {{ block.settings.after_text_left }}%;
+    transform: translate(-50%, -50%);
+  }
+
+  .ai-before-after-banner-text-{{ ai_gen_id }} {
+    position: absolute;
+    z-index: 15;
+    top: {{ block.settings.banner_text_top }}%;
+    left: {{ block.settings.banner_text_left }}%;
+    transform: translate(-50%, -50%);
+    padding: {{ block.settings.banner_padding }}px;
+    background-color: {{ block.settings.banner_background_color }};
+    border-radius: {{ block.settings.banner_border_radius }}px;
+    pointer-events: none;
+    max-width: 90%;
+  }
+
+  .ai-before-after-banner-text-{{ ai_gen_id }} h1,
+  .ai-before-after-banner-text-{{ ai_gen_id }} h2,
+  .ai-before-after-banner-text-{{ ai_gen_id }} h3,
+  .ai-before-after-banner-text-{{ ai_gen_id }} h4,
+  .ai-before-after-banner-text-{{ ai_gen_id }} h5,
+  .ai-before-after-banner-text-{{ ai_gen_id }} h6,
+  .ai-before-after-banner-text-{{ ai_gen_id }} p {
+    margin: 0;
+    color: {{ block.settings.banner_text_color }};
+    font-size: {{ block.settings.banner_text_size }}px;
+    font-weight: {{ block.settings.banner_text_weight }};
+    text-align: {{ block.settings.banner_text_align }};
+    line-height: {{ block.settings.banner_line_height }};
+    letter-spacing: {{ block.settings.banner_letter_spacing }}px;
+  }
+
+  .ai-before-after-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-before-after-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    max-height: 500px;
+  }
+
+  .ai-before-after-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-before-after-slider-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-before-after-text-overlay-{{ ai_gen_id }} p {
+      font-size: {{ block.settings.text_size | times: 0.8 }}px;
+    }
+
+    .ai-before-after-banner-text-{{ ai_gen_id }} h1,
+    .ai-before-after-banner-text-{{ ai_gen_id }} h2,
+    .ai-before-after-banner-text-{{ ai_gen_id }} h3,
+    .ai-before-after-banner-text-{{ ai_gen_id }} h4,
+    .ai-before-after-banner-text-{{ ai_gen_id }} h5,
+    .ai-before-after-banner-text-{{ ai_gen_id }} h6,
+    .ai-before-after-banner-text-{{ ai_gen_id }} p {
+      font-size: {{ block.settings.banner_text_size | times: 0.7 }}px;
+    }
+
+    .ai-before-after-slider-button-{{ ai_gen_id }} {
+      width: {{ block.settings.slider_button_size | times: 0.8 }}px;
+      height: {{ block.settings.slider_button_size | times: 0.8 }}px;
+    }
+
+    .ai-before-after-slider-button-{{ ai_gen_id }} svg {
+      width: 10px;
+      height: 10px;
+    }
+  }
+{% endstyle %}
+
+<before-after-slider-{{ ai_gen_id }}
+  class="ai-before-after-slider-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+  data-initial-position="{{ block.settings.initial_position }}"
+>
+  <div class="ai-before-after-container-{{ ai_gen_id }}">
+    <div class="ai-before-after-image-wrapper-{{ ai_gen_id }}">
+      {% if block.settings.before_image %}
+        <img
+          src="{{ block.settings.before_image | image_url: width: 2000 }}"
+          alt="{{ block.settings.before_image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.before_image.width }}"
+          height="{{ block.settings.before_image.height }}"
+          class="ai-before-after-image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-before-after-placeholder-{{ ai_gen_id }}">
+          {{ 'product-1' | placeholder_svg_tag }}
+          <div class="ai-before-after-empty-state-{{ ai_gen_id }}">
+            添加前图（不带甲片）
+          </div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.before_text != blank %}
+        <div class="ai-before-after-text-overlay-{{ ai_gen_id }} ai-before-after-before-text-{{ ai_gen_id }}">
+          {{ block.settings.before_text }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div
+      class="ai-before-after-after-wrapper-{{ ai_gen_id }}"
+      data-after-wrapper
+    >
+      {% if block.settings.after_image %}
+        <img
+          src="{{ block.settings.after_image | image_url: width: 2000 }}"
+          alt="{{ block.settings.after_image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.after_image.width }}"
+          height="{{ block.settings.after_image.height }}"
+          class="ai-before-after-image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-before-after-placeholder-{{ ai_gen_id }}">
+          {{ 'product-2' | placeholder_svg_tag }}
+          <div class="ai-before-after-empty-state-{{ ai_gen_id }}">
+            添加后图（带甲片）
+          </div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.after_text != blank %}
+        <div class="ai-before-after-text-overlay-{{ ai_gen_id }} ai-before-after-after-text-{{ ai_gen_id }}">
+          {{ block.settings.after_text }}
+        </div>
+      {% endif %}
+    </div>
+
+    {% if block.settings.banner_text != blank %}
+      <div class="ai-before-after-banner-text-{{ ai_gen_id }}">
+        {{ block.settings.banner_text }}
+      </div>
+    {% endif %}
+
+    <div
+      class="ai-before-after-slider-handle-{{ ai_gen_id }}"
+      data-slider-handle
+    >
+      <div class="ai-before-after-slider-button-{{ ai_gen_id }}">
+        <div class="ai-before-after-slider-arrows-{{ ai_gen_id }}">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</before-after-slider-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BeforeAfterSlider{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.isDragging = false;
+        this.container = null;
+        this.handle = null;
+        this.afterWrapper = null;
+      }
+
+      connectedCallback() {
+        this.container = this.querySelector('.ai-before-after-container-{{ ai_gen_id }}');
+        this.handle = this.querySelector('[data-slider-handle]');
+        this.afterWrapper = this.querySelector('[data-after-wrapper]');
+
+        if (!this.container || !this.handle || !this.afterWrapper) return;
+
+        const initialPosition = parseFloat(this.dataset.initialPosition) || 50;
+        this.updatePosition(initialPosition);
+
+        this.handle.addEventListener('mousedown', this.startDrag.bind(this));
+        this.handle.addEventListener('touchstart', this.startDrag.bind(this), { passive: true });
+        
+        document.addEventListener('mousemove', this.onDrag.bind(this));
+        document.addEventListener('touchmove', this.onDrag.bind(this), { passive: false });
+        
+        document.addEventListener('mouseup', this.stopDrag.bind(this));
+        document.addEventListener('touchend', this.stopDrag.bind(this));
+
+        this.container.addEventListener('click', this.onContainerClick.bind(this));
+      }
+
+      startDrag(e) {
+        this.isDragging = true;
+        e.preventDefault();
+      }
+
+      stopDrag() {
+        this.isDragging = false;
+      }
+
+      onDrag(e) {
+        if (!this.isDragging) return;
+
+        e.preventDefault();
+        const rect = this.container.getBoundingClientRect();
+        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const x = clientX - rect.left;
+        const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+        
+        this.updatePosition(percentage);
+      }
+
+      onContainerClick(e) {
+        if (e.target.closest('[data-slider-handle]')) return;
+        
+        const rect = this.container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+        
+        this.updatePosition(percentage);
+      }
+
+      updatePosition(percentage) {
+        this.handle.style.left = percentage + '%';
+        this.afterWrapper.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
+      }
+
+      disconnectedCallback() {
+        document.removeEventListener('mousemove', this.onDrag.bind(this));
+        document.removeEventListener('touchmove', this.onDrag.bind(this));
+        document.removeEventListener('mouseup', this.stopDrag.bind(this));
+        document.removeEventListener('touchend', this.stopDrag.bind(this));
+      }
+    }
+
+    customElements.define('before-after-slider-{{ ai_gen_id }}', BeforeAfterSlider{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "前后对比滑块",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "图片"
+    },
+    {
+      "type": "image_picker",
+      "id": "before_image",
+      "label": "前图（不带甲片）"
+    },
+    {
+      "type": "image_picker",
+      "id": "after_image",
+      "label": "后图（带甲片）"
+    },
+    {
+      "type": "range",
+      "id": "aspect_ratio",
+      "label": "图片高宽比",
+      "min": 30,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "default": 75
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "桌面宽度",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "滑块样式"
+    },
+    {
+      "type": "range",
+      "id": "initial_position",
+      "label": "初始位置",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "slider_color",
+      "label": "滑块颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "slider_icon_color",
+      "label": "滑块图标颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "slider_button_size",
+      "label": "滑块按钮大小",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Banner 标题文本"
+    },
+    {
+      "type": "richtext",
+      "id": "banner_text",
+      "label": "Banner 文本"
+    },
+    {
+      "type": "range",
+      "id": "banner_text_top",
+      "label": "垂直位置",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "banner_text_left",
+      "label": "水平位置",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "color",
+      "id": "banner_text_color",
+      "label": "文本颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "banner_background_color",
+      "label": "背景颜色",
+      "default": "#00000080"
+    },
+    {
+      "type": "range",
+      "id": "banner_text_size",
+      "label": "文本大小",
+      "min": 16,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "select",
+      "id": "banner_text_weight",
+      "label": "文本粗细",
+      "options": [
+        {
+          "value": "300",
+          "label": "细"
+        },
+        {
+          "value": "400",
+          "label": "正常"
+        },
+        {
+          "value": "500",
+          "label": "中等"
+        },
+        {
+          "value": "600",
+          "label": "半粗"
+        },
+        {
+          "value": "700",
+          "label": "粗体"
+        },
+        {
+          "value": "800",
+          "label": "特粗"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "select",
+      "id": "banner_text_align",
+      "label": "文本对齐",
+      "options": [
+        {
+          "value": "left",
+          "label": "左对齐"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        },
+        {
+          "value": "right",
+          "label": "右对齐"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "banner_line_height",
+      "label": "行高",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "banner_letter_spacing",
+      "label": "字间距",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "banner_padding",
+      "label": "内边距",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "banner_border_radius",
+      "label": "圆角",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "前图文本"
+    },
+    {
+      "type": "richtext",
+      "id": "before_text",
+      "label": "前图文本",
+      "default": "<p>前</p>"
+    },
+    {
+      "type": "range",
+      "id": "before_text_top",
+      "label": "垂直位置",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "before_text_left",
+      "label": "水平位置",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "后图文本"
+    },
+    {
+      "type": "richtext",
+      "id": "after_text",
+      "label": "后图文本",
+      "default": "<p>后</p>"
+    },
+    {
+      "type": "range",
+      "id": "after_text_top",
+      "label": "垂直位置",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "after_text_left",
+      "label": "水平位置",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 85
+    },
+    {
+      "type": "header",
+      "content": "前后文本样式"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "文本颜色",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_background_color",
+      "label": "文本背景颜色",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "文本大小",
+      "min": 12,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "text_weight",
+      "label": "文本粗细",
+      "options": [
+        {
+          "value": "400",
+          "label": "正常"
+        },
+        {
+          "value": "500",
+          "label": "中等"
+        },
+        {
+          "value": "600",
+          "label": "半粗"
+        },
+        {
+          "value": "700",
+          "label": "粗体"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "文本对齐",
+      "options": [
+        {
+          "value": "left",
+          "label": "左对齐"
+        },
+        {
+          "value": "center",
+          "label": "居中"
+        },
+        {
+          "value": "right",
+          "label": "右对齐"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "text_padding",
+      "label": "文本内边距",
+      "min": 4,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "text_border_radius",
+      "label": "文本圆角",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "前后对比滑块"
+    }
+  ]
+}
+{% endschema %}

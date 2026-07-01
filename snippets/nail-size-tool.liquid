@@ -1,0 +1,667 @@
+<script>
+(function () {
+  if (window.__NF_MEASURE_WIDGET_INIT__) return;
+  window.__NF_MEASURE_WIDGET_INIT__ = true;
+
+  var CARD_W_MM = 85.6;
+  var CARD_H_MM = 54;
+  var STORAGE_KEY = 'moonlee_ppmm_v2';
+  var THUMB_KEY = 'moonlee_thumb_mm';
+  var SHOP_URL = 'https://' + 'moonleehome.com/';
+
+  // ============================================================
+  // Mode detection: product page vs landing/blog page
+  // ============================================================
+  {%- if product != blank and request.page_type == 'product' -%}
+  var PAGE_MODE = 'product';
+  {%- else -%}
+  var PAGE_MODE = 'landing';
+  {%- endif -%}
+
+  // Generic fallback size chart (used when no product-specific SizeSpec is found)
+  var fallbackChart = [
+    { s: 'XS', min: 8,    max: 10.4, d: 'Petite / Small hands' },
+    { s: 'S',  min: 10.5, max: 12.4, d: 'Most common fit' },
+    { s: 'M',  min: 12.5, max: 13.4, d: 'Average hands ✓ Best seller' },
+    { s: 'L',  min: 13.5, max: 22,   d: 'Wider / Larger hands' }
+  ];
+
+  // Dynamic size chart — read from page JSON-LD
+  var sizeChart = null;
+
+  function initSizeChart() {
+    if (PAGE_MODE !== 'product') {
+      sizeChart = fallbackChart;
+      return;
+    }
+    // Try to read SizeSpecification from JSON-LD
+    var scripts = document.querySelectorAll('script[type="application/ld+json"][data-size-spec]');
+    for (var i = 0; i < scripts.length; i++) {
+      try {
+        var data = JSON.parse(scripts[i].textContent);
+        // Look for additionalProperty → SizeSpecification
+        if (data.additionalProperty && Array.isArray(data.additionalProperty)) {
+          for (var j = 0; j < data.additionalProperty.length; j++) {
+            var prop = data.additionalProperty[j];
+            if (prop.value && prop.value['@type'] === 'SizeSpecification' && prop.value.hasVariant) {
+              var variants = prop.value.hasVariant;
+              // Build chart from variants: sort by thumb width ascending
+              var chart = [];
+              for (var k = 0; k < variants.length; k++) {
+                var v = variants[k];
+                var thumbWidth = null;
+                if (v.suggestedMeasurement) {
+                  for (var m = 0; m < v.suggestedMeasurement.length; m++) {
+                    if (v.suggestedMeasurement[m].name === 'Thumb width') {
+                      thumbWidth = parseFloat(v.suggestedMeasurement[m].value);
+                      break;
+                    }
+                  }
+                }
+                if (thumbWidth && v.size) {
+                  chart.push({ s: v.size, tw: thumbWidth });
+                }
+              }
+              if (chart.length >= 2) {
+                // Sort by thumb width ascending
+                chart.sort(function(a, b) { return a.tw - b.tw; });
+                // Build thresholds: use mid-points between consecutive variants
+                sizeChart = [];
+                for (var k = 0; k < chart.length; k++) {
+                  var minT = (k === 0) ? 6 : Math.round((chart[k-1].tw + chart[k].tw) / 2 * 100) / 100;
+                  var maxT = (k === chart.length - 1) ? 30 : Math.round((chart[k].tw + chart[k+1].tw) / 2 * 100) / 100;
+                  var desc = '';
+                  if (chart[k].s === 'XS') desc = 'Petite / Small hands';
+                  else if (chart[k].s === 'S') desc = 'Most common fit';
+                  else if (chart[k].s === 'M') desc = 'Average hands ✓ Best seller';
+                  else if (chart[k].s === 'L') desc = 'Wider / Larger hands';
+                  sizeChart.push({ s: chart[k].s, min: minT, max: maxT, d: desc });
+                }
+                return; // Successfully built product-specific chart
+              }
+            }
+          }
+        }
+      } catch(e) {}
+    }
+    // Fallback: no SizeSpec found on this page → generic chart
+    sizeChart = fallbackChart;
+  }
+
+  // Get saved thumb width from localStorage
+  function getSavedThumb() {
+    try {
+      var v = localStorage.getItem(THUMB_KEY);
+      return v ? parseFloat(v) : null;
+    } catch (e) { return null; }
+  }
+
+  function saveThumb(mm) {
+    try { localStorage.setItem(THUMB_KEY, String(mm)); } catch(e) {}
+  }
+
+  var trigger = document.getElementById('nf-trigger');
+  if (!trigger) return;
+
+  // Initialize size chart before rendering
+  initSizeChart();
+
+  injectStyles();
+  injectHTML();
+
+  var state = {
+    ppmm: null,
+    cssPPMM: null,
+    currentScale: 1,
+    isMobile: false,
+    cardBasePx: 0,
+    cardAxisMM: CARD_W_MM,
+    rafCard: 0,
+    rafNail: 0
+  };
+
+  var els = {
+    openBtn: document.getElementById('nf-open-btn'),
+    modal1: document.getElementById('nf-modal-1'),
+    modal2: document.getElementById('nf-modal-2'),
+    close1: document.getElementById('nf-close-1'),
+    close2: document.getElementById('nf-close-2'),
+    box1: document.getElementById('nf-box-1'),
+    confirmBtn: document.getElementById('nf-confirm-btn'),
+    skipBtn: document.getElementById('nf-skip-btn'),
+    backBtn: document.getElementById('nf-back-btn'),
+    shopBtn: document.getElementById('nf-shop-btn'),
+    cardRect: document.getElementById('nf-card-rect'),
+    cardScale: document.getElementById('nf-card-scale'),
+    cardSlider: document.getElementById('nf-card-slider'),
+    calHint: document.getElementById('nf-cal-hint'),
+    calVisual: document.getElementById('nf-cal-visual'),
+    cardLabel: document.getElementById('nf-card-label'),
+    axisHint: document.getElementById('nf-cal-axis-hint'),
+    nailRuler: document.getElementById('nf-nail-ruler'),
+    nailMM: document.getElementById('nf-nail-mm'),
+    nailSlider: document.getElementById('nf-nail-slider'),
+    sizeLabel: document.getElementById('nf-size-label'),
+    sizeDesc: document.getElementById('nf-size-desc'),
+    resultSection: document.getElementById('nf-result-section'),
+    modeHint: document.getElementById('nf-mode-hint')
+  };
+
+  bindEvents();
+
+  function injectStyles() {
+    if (document.getElementById('nf-widget-style')) return;
+
+    var style = document.createElement('style');
+    style.id = 'nf-widget-style';
+    style.textContent = [
+      '.nf-entry{margin:16px 0;}',
+      '.nf-btn{appearance:none;border:none;background:none;font:inherit;}',
+      '.nf-open-btn{width:100%;padding:12px 16px;border:1px solid #d8dbe2;border-radius:14px;background:#fff;color:#1f2937;font-size:14px;font-weight:600;letter-spacing:.01em;cursor:pointer;transition:all .2s ease;box-shadow:0 2px 10px rgba(17,24,39,.04);}',
+      '.nf-open-btn:hover{border-color:#b9c2d0;box-shadow:0 8px 24px rgba(17,24,39,.08);transform:translateY(-1px);}',
+      '.nf-open-btn:active{transform:translateY(0);}',
+
+      '.nf-modal{display:none;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.62);backdrop-filter:blur(6px);}',
+      '.nf-modal.is-scroll{align-items:flex-start;overflow-y:auto;padding:40px 16px;}',
+      '.nf-panel{position:relative;width:min(92vw,520px);background:#fff;border-radius:22px;padding:24px;box-sizing:border-box;box-shadow:0 30px 80px rgba(15,23,42,.22);}',
+      '.nf-panel--measure{width:min(92vw,380px);margin:auto;}',
+      '.nf-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:999px;cursor:pointer;color:#6b7280;background:#f8fafc;transition:all .2s ease;font-size:18px;line-height:1;}',
+      '.nf-close:hover{background:#eef2f7;color:#111827;}',
+
+      '.nf-kicker{margin:0 0 6px;font-size:13px;font-weight:700;color:#e56b81;letter-spacing:.03em;}',
+      '.nf-title{margin:0 0 8px;font-size:22px;line-height:1.2;font-weight:800;color:#111827;}',
+      '.nf-desc{margin:0 0 16px;font-size:13px;line-height:1.6;color:#6b7280;}',
+      '.nf-progress{display:flex;gap:8px;margin:0 0 18px;}',
+      '.nf-progress span{flex:1;height:6px;border-radius:999px;background:#f2d4db;}',
+      '.nf-progress .is-active{background:linear-gradient(90deg,#ea748e,#d85f7b);}',
+
+      '.nf-guide-art{margin:14px 0 16px;padding:14px;border-radius:18px;background:linear-gradient(180deg,#f8fbff,#f5f7fb);border:1px solid #e8edf5;}',
+      '.nf-guide-art svg{display:block;width:100%;height:auto;}',
+      '.nf-guide-caption{margin:0 0 10px;font-size:12px;line-height:1.45;color:#64748b;font-weight:600;}',
+      '.nf-guide-note{margin:8px 0 0;font-size:11px;line-height:1.45;color:#94a3b8;text-align:center;}',
+      '.nf-guide-blue{fill:rgba(91,143,230,.14);stroke:#5b8fe6;stroke-width:2;}',
+      '.nf-guide-card{fill:#fff;stroke:#334155;stroke-width:1.6;}',
+      '.nf-guide-line-blue{stroke:#5b8fe6;stroke-width:2;stroke-linecap:round;}',
+      '.nf-guide-line-pink{stroke:#e56b81;stroke-width:2.4;stroke-linecap:round;}',
+      '.nf-guide-muted{stroke:#cbd5e1;stroke-width:1.2;stroke-linecap:round;}',
+      '.nf-guide-text{fill:#64748b;font-size:11px;font-family:Arial,sans-serif;font-weight:700;}',
+      '.nf-guide-small-text{fill:#94a3b8;font-size:9px;font-family:Arial,sans-serif;}',
+      '.nf-guide-thumb{fill:#ffe1d5;stroke:#d69a86;stroke-width:1.4;}',
+      '.nf-guide-nail{fill:#fff7f3;stroke:#c97b6b;stroke-width:1;}',
+
+      '.nf-card-wrap{display:flex;justify-content:flex-start;align-items:center;min-height:88px;margin:18px 0 8px;}',
+      '.nf-card-rect{position:relative;box-sizing:border-box;border-radius:10px;border:2px solid #5b8fe6;background:linear-gradient(180deg,rgba(91,143,230,.16),rgba(91,143,230,.08));box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);will-change:transform;}',
+      '.nf-card-label{position:absolute;right:8px;bottom:6px;font-size:10px;font-weight:700;color:#4677cb;}',
+      '.nf-axis-hint{margin:0 0 14px;font-size:11px;color:#9ca3af;}',
+
+      '.nf-row{margin-bottom:18px;}',
+      '.nf-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;color:#4b5563;}',
+      '.nf-label strong{color:#111827;}',
+      '.nf-range{width:100%;accent-color:#d85f7b;cursor:pointer;}',
+
+      '.nf-primary{width:100%;padding:13px 16px;border-radius:14px;background:linear-gradient(135deg,#1f2937,#111827);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s ease;box-shadow:0 10px 24px rgba(17,24,39,.18);}',
+      '.nf-primary:hover{transform:translateY(-1px);box-shadow:0 16px 32px rgba(17,24,39,.22);}',
+      '.nf-shop{width:100%;padding:14px 16px;border-radius:14px;background:linear-gradient(135deg,#e56b81,#c0665a);color:#fff;font-size:14px;font-weight:800;letter-spacing:.03em;cursor:pointer;transition:all .2s ease;box-shadow:0 12px 26px rgba(192,102,90,.24);}',
+      '.nf-shop:hover{transform:translateY(-1px);box-shadow:0 18px 34px rgba(192,102,90,.3);}',
+      '.nf-shop:active{transform:translateY(0);}',
+      '.nf-secondary{width:100%;padding:11px 16px;border-radius:14px;border:1px solid #e5e7eb;background:#fff;color:#6b7280;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s ease;}',
+      '.nf-secondary:hover{background:#fafafa;color:#374151;}',
+      '.nf-linkbtn{width:100%;margin-top:8px;padding:8px 12px;color:#9ca3af;font-size:12px;cursor:pointer;}',
+
+      '.nf-ruler-wrap{position:relative;height:64px;margin-bottom:14px;border-radius:14px;background:linear-gradient(180deg,#fcfcfd,#f8fafc);border:1px solid #edf1f5;padding:4px 0;}',
+      '.nf-ruler{display:block;width:100%;height:56px;}',
+      '.nf-result{background:linear-gradient(180deg,#fff7f3,#fff1eb);border:1px solid #f5ddd5;border-radius:18px;padding:18px 16px;margin:16px 0 20px;text-align:center;}',
+      '.nf-result-k{font-size:11px;color:#b0897f;letter-spacing:.08em;margin-bottom:6px;font-weight:700;}',
+      '.nf-result-size{font-size:42px;line-height:1;font-weight:900;color:#c0665a;letter-spacing:.02em;}',
+      '.nf-result-desc{margin-top:6px;font-size:13px;color:#7c6f6b;}',
+      '.nf-landing-hint{margin:8px 0;padding:10px 14px;border-radius:12px;background:#f0f7ff;border:1px solid #d4e3f7;font-size:12px;color:#4a7ac7;text-align:center;line-height:1.5;}',
+      '.nf-foot{margin:12px 0 0;font-size:11px;color:#b6bcc8;text-align:center;}',
+
+      'body.nf-lock{overflow:hidden;}',
+
+      '@media (max-width:600px){',
+      '.nf-panel{padding:20px 18px;border-radius:20px;}',
+      '.nf-title{font-size:20px;}',
+      '.nf-open-btn{font-size:13px;padding:11px 14px;}',
+      '.nf-card-wrap{min-height:120px;justify-content:center;}',
+      '.nf-guide-art{padding:12px;margin:12px 0 14px;}',
+      '.nf-guide-caption{font-size:11px;}',
+      '}'
+    ].join('');
+
+    document.head.appendChild(style);
+  }
+
+  function injectHTML() {
+    trigger.innerHTML = [
+      '<div class="nf-entry">',
+        '<button id="nf-open-btn" class="nf-btn nf-open-btn" type="button" aria-haspopup="dialog">',
+          '📏 Quickly measure fingers — on screen, no ruler needed',
+        '</button>',
+      '</div>',
+
+      '<div id="nf-modal-1" class="nf-modal is-scroll" role="dialog" aria-modal="true" aria-labelledby="nf-title-step1">',
+        '<div id="nf-box-1" class="nf-panel">',
+          '<button id="nf-close-1" class="nf-btn nf-close" type="button" aria-label="Close">✕</button>',
+          '<div class="nf-progress"><span class="is-active"></span><span></span></div>',
+          '<p class="nf-kicker">Step 1</p>',
+          '<h3 id="nf-title-step1" class="nf-title">Calibrate Your Screen</h3>',
+          '<p id="nf-cal-hint" class="nf-desc"></p>',
+          '<div id="nf-cal-visual" class="nf-guide-art"></div>',
+
+          '<div id="nf-card-wrap" class="nf-card-wrap">',
+            '<div id="nf-card-rect" class="nf-card-rect">',
+              '<span id="nf-card-label" class="nf-card-label"></span>',
+            '</div>',
+          '</div>',
+
+          '<p id="nf-cal-axis-hint" class="nf-axis-hint"></p>',
+
+          '<div class="nf-row">',
+            '<div class="nf-label">Scale <strong><span id="nf-card-scale">100</span>%</strong></div>',
+            '<input id="nf-card-slider" class="nf-range" type="range" min="40" max="200" value="100" step="1" aria-label="Card calibration scale">',
+          '</div>',
+
+          '<button id="nf-confirm-btn" class="nf-btn nf-primary" type="button">✓ Matches My Card — Next</button>',
+          '<button id="nf-skip-btn" class="nf-btn nf-linkbtn" type="button">Skip calibration (less accurate)</button>',
+        '</div>',
+      '</div>',
+
+      '<div id="nf-modal-2" class="nf-modal is-scroll" role="dialog" aria-modal="true" aria-labelledby="nf-title-step2">',
+        '<div class="nf-panel nf-panel--measure">',
+          '<button id="nf-close-2" class="nf-btn nf-close" type="button" aria-label="Close">✕</button>',
+          '<div class="nf-progress"><span class="is-active"></span><span class="is-active"></span></div>',
+          '<p class="nf-kicker">Step 2</p>',
+          '<h3 id="nf-title-step2" class="nf-title">Measure Your Thumb Nail</h3>',
+          '<p class="nf-desc">Place your thumb nail on the ruler. Drag the pink line until it matches the nail\u2019s right edge.</p>',
+          thumbMeasureGuide(),
+
+          '<div class="nf-ruler-wrap">',
+            '<canvas id="nf-nail-ruler" class="nf-ruler" height="56"></canvas>',
+          '</div>',
+
+          '<div class="nf-row">',
+            '<div class="nf-label">Nail width <strong><span id="nf-nail-mm">14</span> mm</strong></div>',
+            '<input id="nf-nail-slider" class="nf-range" type="range" min="8" max="22" value="14" step="0.5" aria-label="Nail width">',
+          '</div>',
+
+          '<div id="nf-result-section" class="nf-result" style="display:' + (PAGE_MODE === 'product' ? 'block' : 'none') + '">',
+            '<div class="nf-result-k">RECOMMENDED SIZE</div>',
+            '<div id="nf-size-label" class="nf-result-size">S</div>',
+            '<div id="nf-size-desc" class="nf-result-desc">Most common fit</div>',
+          '</div>',
+
+          '<div id="nf-landing-section" style="display:' + (PAGE_MODE === 'landing' ? 'block' : 'none') + '">',
+            '<div class="nf-landing-hint">\u2705 We\'ve saved your measurement!<br>When you browse our products, your recommended size will show up automatically.</div>',
+          '</div>',
+
+          '<button id="nf-shop-btn" class="nf-btn nf-shop" type="button">' + (PAGE_MODE === 'product' ? 'Shop My Size Now \u2192' : '\uD83D\uDC40 Browse Our Collection') + '</button>',
+          '<button id="nf-back-btn" class="nf-btn nf-secondary" type="button" style="margin-top:8px;">\u2190 Re-calibrate</button>',
+          '<p class="nf-foot">* Estimated accuracy: \u00b10.5mm after proper calibration</p>',
+        '</div>',
+      '</div>'
+    ].join('');
+  }
+
+  function desktopCardGuide() {
+    return [
+      '<svg viewBox="0 0 320 128" role="img" aria-label="Desktop calibration guide showing credit card long edge aligned with blue frame">',
+        '<rect x="42" y="48" width="226" height="36" rx="8" class="nf-guide-blue"></rect>',
+        '<rect x="52" y="38" width="206" height="52" rx="9" class="nf-guide-card"></rect>',
+        '<rect x="70" y="52" width="34" height="8" rx="2" fill="#e2e8f0"></rect>',
+        '<circle cx="226" cy="64" r="9" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"></circle>',
+        '<line x1="52" y1="103" x2="258" y2="103" class="nf-guide-line-blue"></line>',
+        '<path d="M52 103 L60 98 L60 108 Z" fill="#5b8fe6"></path>',
+        '<path d="M258 103 L250 98 L250 108 Z" fill="#5b8fe6"></path>',
+        '<line x1="42" y1="28" x2="42" y2="94" class="nf-guide-muted"></line>',
+        '<line x1="268" y1="28" x2="268" y2="94" class="nf-guide-muted"></line>',
+        '<text x="160" y="24" text-anchor="middle" class="nf-guide-small-text">Adjust the slider until both edges line up</text>',
+        '<text x="160" y="120" text-anchor="middle" class="nf-guide-text">Match the long edge: 85.6mm</text>',
+      '</svg>',
+      '<p class="nf-guide-note">Tip: use a real credit card, bank card, or standard ID-size card.</p>'
+    ].join('');
+  }
+
+  function mobileCardGuide() {
+    return [
+      '<svg viewBox="0 0 320 154" role="img" aria-label="Mobile calibration guide showing credit card short edge aligned with blue frame">',
+        '<rect x="132" y="24" width="56" height="96" rx="8" class="nf-guide-blue"></rect>',
+        '<rect x="118" y="30" width="84" height="84" rx="10" class="nf-guide-card"></rect>',
+        '<rect x="132" y="46" width="26" height="7" rx="2" fill="#e2e8f0"></rect>',
+        '<circle cx="178" cy="72" r="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"></circle>',
+        '<line x1="222" y1="30" x2="222" y2="114" class="nf-guide-line-blue"></line>',
+        '<path d="M222 30 L217 39 L227 39 Z" fill="#5b8fe6"></path>',
+        '<path d="M222 114 L217 105 L227 105 Z" fill="#5b8fe6"></path>',
+        '<text x="236" y="76" class="nf-guide-text">54mm</text>',
+        '<line x1="104" y1="30" x2="214" y2="30" class="nf-guide-muted"></line>',
+        '<line x1="104" y1="114" x2="214" y2="114" class="nf-guide-muted"></line>',
+        '<text x="160" y="18" text-anchor="middle" class="nf-guide-small-text">Adjust the slider until both edges line up</text>',
+        '<text x="160" y="140" text-anchor="middle" class="nf-guide-text">Match the short edge : 54mm</text>',
+      '</svg>',
+      '<p class="nf-guide-note">Tip: use a real credit card, bank card, or standard ID-size card.</p>'
+    ].join('');
+  }
+
+  function thumbMeasureGuide() {
+    return [
+      '<div class="nf-guide-art nf-thumb-guide">',
+        '<div class="nf-guide-caption">Thumb guide: place your thumb nail on the ruler, then move the pink line to the nail\'s right edge.</div>',
+        '<img',
+          ' src="https://cdn.shopify.com/s/files/1/0651/2210/7463/files/20260520221244_sqsh.webp?v=1781850411"',
+          ' alt="Thumb nail measuring guide showing thumb placed on ruler and pink line matching right edge"',
+          ' style="width:100%;max-width:320px;display:block;margin:0 auto;"',
+        '>',
+        '<p class="nf-guide-note">Your size recommendation updates automatically as the pink line moves.</p>',
+      '</div>'
+    ].join('');
+  }
+
+  function setCalibrationGuide(mode) {
+    if (!els.calVisual) return;
+    els.calVisual.innerHTML = mode === 'mobile'
+      ? mobileCardGuide()
+      : desktopCardGuide();
+  }
+
+  function bindEvents() {
+    els.openBtn.addEventListener('click', open);
+    els.close1.addEventListener('click', close);
+    els.close2.addEventListener('click', close);
+    els.confirmBtn.addEventListener('click', confirmCalibration);
+    els.skipBtn.addEventListener('click', skipCalibration);
+    els.backBtn.addEventListener('click', backToCalibration);
+    els.shopBtn.addEventListener('click', shopNow);
+
+    els.cardSlider.addEventListener('input', function () {
+      cardSlide(this.value);
+    }, { passive: true });
+
+    els.nailSlider.addEventListener('input', function () {
+      nailSlide(this.value);
+    }, { passive: true });
+
+    els.modal1.addEventListener('click', function (e) {
+      if (e.target === els.modal1) close();
+    });
+
+    els.modal2.addEventListener('click', function (e) {
+      if (e.target === els.modal2) close();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('orientationchange', handleResize, { passive: true });
+  }
+
+  function getSize(mm) {
+    if (!sizeChart) sizeChart = fallbackChart;
+    for (var i = 0; i < sizeChart.length; i++) {
+      if (mm >= sizeChart[i].min && mm <= sizeChart[i].max) return sizeChart[i];
+    }
+    return mm > sizeChart[sizeChart.length - 1].max
+      ? { s: 'L+', d: 'Contact us for custom sizing' }
+      : sizeChart[0];
+  }
+
+  function getCSSPPMM() {
+    if (state.cssPPMM) return state.cssPPMM;
+    var d = document.createElement('div');
+    d.style.cssText = 'width:10mm;position:absolute;visibility:hidden;pointer-events:none;';
+    document.body.appendChild(d);
+    state.cssPPMM = d.offsetWidth / 10;
+    document.body.removeChild(d);
+    return state.cssPPMM;
+  }
+
+  function getSaved() {
+    try {
+      var v = localStorage.getItem(STORAGE_KEY);
+      return v ? parseFloat(v) : null;
+    } catch (e) { return null; }
+  }
+
+  function savePPMM(v) {
+    try { localStorage.setItem(STORAGE_KEY, String(v)); } catch (e) {}
+  }
+
+  function clearSaved() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  }
+
+  function lockBody(lock) {
+    document.body.classList[lock ? 'add' : 'remove']('nf-lock');
+  }
+
+  function setupCalibrationUI() {
+    state.isMobile = window.innerWidth < 600;
+    state.currentScale = 1;
+
+    els.cardSlider.value = 100;
+    els.cardScale.textContent = '100';
+    els.cardRect.style.transform = '';
+
+    if (state.isMobile) {
+      setCalibrationGuide('mobile');
+      els.box1.style.width = 'min(92vw, 420px)';
+      els.cardRect.style.width = '60px';
+      els.cardRect.style.height = CARD_H_MM + 'mm';
+      els.cardRect.style.transformOrigin = 'top center';
+      els.cardRect.style.transform = 'scaleY(1)';
+      els.cardLabel.textContent = '54mm';
+
+      els.calHint.innerHTML = 'Place your credit card flat on the blue bar, then drag until the bar height <strong>exactly matches</strong> the short side of your card.';
+      els.axisHint.textContent = '\u2195 Drag to match card height';
+
+      state.cardAxisMM = CARD_H_MM;
+      state.cardBasePx = els.cardRect.offsetHeight;
+    } else {
+      setCalibrationGuide('desktop');
+      els.box1.style.width = 'min(92vw, 520px)';
+      els.cardRect.style.width = CARD_W_MM + 'mm';
+      els.cardRect.style.height = '22px';
+      els.cardRect.style.transformOrigin = 'left center';
+      els.cardRect.style.transform = 'scaleX(1)';
+      els.cardLabel.textContent = '85.6mm';
+
+      els.calHint.innerHTML = 'Place your credit card flat on the blue bar, then drag until the bar width <strong>exactly matches</strong> the long side of your card.';
+      els.axisHint.textContent = '\u2190 Drag to match card width \u2192';
+
+      state.cardAxisMM = CARD_W_MM;
+      state.cardBasePx = els.cardRect.offsetWidth;
+    }
+  }
+
+  function open() {
+    var saved = getSaved();
+    if (saved && isFinite(saved) && saved > 0) {
+      state.ppmm = saved;
+      showStep2();
+    } else {
+      showStep1();
+    }
+  }
+
+  function close() {
+    els.modal1.style.display = 'none';
+    els.modal2.style.display = 'none';
+    lockBody(false);
+  }
+
+  function showStep1() {
+    els.modal2.style.display = 'none';
+    els.modal1.style.display = 'flex';
+    lockBody(true);
+    setupCalibrationUI();
+  }
+
+  function showStep2() {
+    els.modal1.style.display = 'none';
+    els.modal2.style.display = 'flex';
+    lockBody(true);
+
+    // Load saved thumb width if available
+    var savedThumb = getSavedThumb();
+    if (savedThumb && savedThumb >= 8 && savedThumb <= 22) {
+      els.nailSlider.value = String(savedThumb);
+    }
+
+    setTimeout(function () {
+      syncCanvasSize();
+      drawNail(parseFloat(els.nailSlider.value));
+    }, 30);
+  }
+
+  function cardSlide(val) {
+    state.currentScale = parseFloat(val) / 100;
+    if (state.rafCard) cancelAnimationFrame(state.rafCard);
+    state.rafCard = requestAnimationFrame(function () {
+      els.cardScale.textContent = val;
+      els.cardRect.style.transform = state.isMobile
+        ? 'scaleY(' + state.currentScale + ')'
+        : 'scaleX(' + state.currentScale + ')';
+    });
+  }
+
+  function confirmCalibration() {
+    if (!state.cardBasePx || !state.cardAxisMM) setupCalibrationUI();
+    state.ppmm = (state.cardBasePx * state.currentScale) / state.cardAxisMM;
+    if (!isFinite(state.ppmm) || state.ppmm <= 0) {
+      state.ppmm = getCSSPPMM();
+    }
+    savePPMM(state.ppmm);
+    showStep2();
+  }
+
+  function skipCalibration() {
+    state.ppmm = getCSSPPMM();
+    showStep2();
+  }
+
+  function backToCalibration() {
+    clearSaved();
+    state.ppmm = null;
+    state.cssPPMM = null;
+    showStep1();
+  }
+
+  function shopNow() {
+    // Save thumb measurement before redirect
+    var mm = parseFloat(els.nailSlider.value);
+    saveThumb(mm);
+    window.location.href = SHOP_URL;
+  }
+
+  function syncCanvasSize() {
+    var canvas = els.nailRuler;
+    var parent = canvas.parentElement;
+    if (!parent) return;
+
+    var dpr = Math.max(window.devicePixelRatio || 1, 1);
+    var cssWidth = Math.floor(parent.clientWidth);
+    var cssHeight = 56;
+
+    if (canvas._cssWidth === cssWidth && canvas._dpr === dpr) return;
+
+    canvas._cssWidth = cssWidth;
+    canvas._dpr = dpr;
+
+    canvas.style.width = cssWidth + 'px';
+    canvas.style.height = cssHeight + 'px';
+    canvas.width = Math.round(cssWidth * dpr);
+    canvas.height = Math.round(cssHeight * dpr);
+
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function drawNail(mm) {
+    mm = parseFloat(mm);
+    if (!isFinite(mm)) mm = 14;
+
+    els.nailMM.textContent = mm.toFixed(mm % 1 === 0 ? 0 : 1);
+
+    var s = getSize(mm);
+    els.sizeLabel.textContent = s.s;
+    els.sizeDesc.textContent = s.d;
+
+    syncCanvasSize();
+
+    var canvas = els.nailRuler;
+    var ctx = canvas.getContext('2d');
+    var w = canvas._cssWidth || canvas.clientWidth;
+    var h = 56;
+    var ppmm = state.ppmm || getCSSPPMM();
+
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.strokeStyle = '#e7ecf2';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, 1);
+    ctx.lineTo(w, 1);
+    ctx.stroke();
+
+    var showLabels = ppmm * 5 >= 26;
+
+    ctx.strokeStyle = '#b7c0cd';
+    ctx.fillStyle = '#8c97a8';
+    ctx.lineWidth = 1;
+    ctx.font = '10px sans-serif';
+
+    for (var i = 0; i <= 22; i++) {
+      var x = Math.round(i * ppmm);
+      if (x > w) break;
+
+      var isFive = i % 5 === 0;
+      var tickH = isFive ? 24 : 11;
+
+      ctx.beginPath();
+      ctx.moveTo(x, 1);
+      ctx.lineTo(x, tickH);
+      ctx.stroke();
+
+      if (isFive && showLabels) {
+        ctx.fillText(i + 'mm', x + 2, 38);
+      }
+    }
+
+    var mx = Math.round(mm * ppmm);
+
+    ctx.strokeStyle = '#e56b81';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(mx, 0);
+    ctx.lineTo(mx, h);
+    ctx.stroke();
+
+    ctx.fillStyle = '#e56b81';
+    ctx.beginPath();
+    ctx.moveTo(mx - 6, 0);
+    ctx.lineTo(mx + 6, 0);
+    ctx.lineTo(mx, 10);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function nailSlide(val) {
+    if (state.rafNail) cancelAnimationFrame(state.rafNail);
+    state.rafNail = requestAnimationFrame(function () {
+      drawNail(val);
+    });
+  }
+
+  function handleResize() {
+    if (els.modal1.style.display === 'flex') {
+      setupCalibrationUI();
+      cardSlide(els.cardSlider.value);
+    }
+    if (els.modal2.style.display === 'flex') {
+      syncCanvasSize();
+      drawNail(parseFloat(els.nailSlider.value));
+    }
+  }
+})();
+</script>

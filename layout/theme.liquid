@@ -1,0 +1,237 @@
+{% comment %}full-cache-bust-20260624{% endcomment %}
+<!doctype html>
+<html
+  {% if request.design_mode %}
+    class="shopify-design-mode"
+  {% endif %}
+  lang="{{ request.locale.iso_code }}"
+>
+  <head>
+    {%- if settings.favicon != blank -%}
+      <link
+        rel="icon"
+        type="image/png"
+        href="{{ settings.favicon | image_url: width: 32, height: 32 }}"
+      >
+    {%- endif -%}
+
+{% comment %}
+{% if settings.transition_to_main_product or settings.page_transition_enabled %}
+  <link
+    rel="expect"
+    href="#MainContent"
+    blocking="render"
+    id="view-transition-render-blocker"
+  >
+{% endif %}
+{% endcomment %}
+
+    <!-- THEME_COMPILE_CHECK_v1 -->
+    {%- render 'meta-tags' -%}
+    {%- if request.page_type == 'index' -%}
+    <link
+      rel="preload"
+      as="image"
+      href="{{ 'image.webp' | file_url }}"
+      fetchpriority="high"
+    >
+    {%- endif -%}
+
+    {%- render 'stylesheets' -%}
+    {%- render 'fonts' -%}
+    {%- render 'scripts' -%}
+    {%- render 'theme-styles-variables' -%}
+    {%- render 'color-schemes' -%}
+
+    {% if request.design_mode %}
+      {%- render 'theme-editor' -%}
+    {% endif %}
+
+    {{ content_for_header }}
+    <meta name="p:domain_verify" content="4c4967b27ef208d57c8670a4100d609a"/>
+    <meta name="google-site-verification" content="CaKP_-JXhRiZTwZEnUjfh-Ahq9Pov_RiLRxEPxClels" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "MOONLEE",
+      "url": "https://moonleehome.com",
+      "logo": "https://cdn.shopify.com/s/files/1/0651/2210/7463/files/logo_61ed7134-552d-4626-aefb-9e2ed2e8fee7.png",
+      "description": "MOONLEE designs premium reusable press-on nails for modern women — from daily office looks to wedding-day glam. Salon-quality craftsmanship, effortless application, no appointment needed.",
+      "foundingDate": "2025",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "info@moonleehome.com",
+        "contactType": "customer service",
+        "availableLanguage": ["English", "Chinese"]
+      },
+      "sameAs": [
+        "https://www.tiktok.com/@moonlee5237",
+        "https://www.instagram.com/moonleehome",
+        "https://www.pinterest.com/moonlee0317"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://moonleehome.com/#website",
+      "url": "https://moonleehome.com",
+      "name": "MOONLEE",
+      "publisher": {
+        "@type": "Organization",
+        "name": "MOONLEE",
+        "url": "https://moonleehome.com"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://moonleehome.com/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+</script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "Find your perfect MOONLEE nail size in 10 seconds",
+      "description": "Use the on-screen ruler to measure your nail width and get an instant size recommendation. No guesswork, no returns.",
+      "totalTime": "PT10S",
+      "estimatedCost": {"@type": "MonetaryAmount", "value": "0", "currency": "USD"},
+      "tool": [
+        {"@type": "HowToTool", "name": "Credit or debit card for screen calibration"},
+        {"@type": "HowToTool", "name": "Smartphone or computer with a screen"}
+      ],
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Calibrate your screen",
+          "text": "Place a standard credit card on your screen and adjust the slider until the on-screen rectangle matches your card's width. This ensures accurate measurement.",
+          "url": "https://moonleehome.com/pages/press-on-nail-size-chart"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Measure your thumb nail",
+          "text": "Place your thumb on the on-screen ruler. Drag the pink line to match the right edge of your nail. Your nail width in millimeters is displayed automatically.",
+          "url": "https://moonleehome.com/pages/press-on-nail-size-chart"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Get your size recommendation",
+          "text": "Your MOONLEE size (XS, S, M, or L) is automatically calculated from your thumb width. The system also shows a description of your hand type for verification.",
+          "url": "https://moonleehome.com/pages/press-on-nail-size-chart"
+        }
+      ]
+    }
+    </script>
+
+
+  </head>
+
+  <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
+    {% render 'skip-to-content-link', href: '#MainContent', text: 'accessibility.skip_to_text' %}
+    <div id="header-group">
+      {% sections 'header-group' %}
+    </div>
+
+    <script>
+      // Inline header height and menu style calculations to prevent layout shift
+      // Note: Updates in calculateHeaderGroupHeight(), updateTransparentHeaderOffset() and setHeaderMenuStyle() utilities.js should be kept in sync with this function
+      (function setHeaderHeighCustomProperties() {
+        /*
+         * Header calculation functions for maintaining CSS variables
+         * Mimic calculateHeaderGroupHeight() in utilities.js
+         */
+        const header = document.querySelector('header-component');
+        const headerGroup = document.querySelector('#header-group');
+        const hasHeaderSection = headerGroup?.querySelector('.header-section');
+
+        if (!header || !headerGroup) return;
+
+        const headerTopRow = header.querySelector('.header__row--top');
+        const headerHeight = header.offsetHeight;
+
+        // Calculate the total height of the header group
+        let headerGroupHeight = 0;
+        const children = headerGroup.children;
+        for (let i = 0; i < children.length; i++) {
+          const element = children[i];
+          if (element === header || !(element instanceof HTMLElement)) continue;
+          headerGroupHeight += element.offsetHeight;
+        }
+
+        // Check for transparent header special case
+        if (header.hasAttribute('transparent') && header.parentElement?.nextElementSibling) {
+          headerGroupHeight += headerHeight;
+        }
+
+        // Set CSS variables
+        document.body.style.setProperty('--header-height', `${headerHeight}px`);
+        document.body.style.setProperty('--header-group-height', `${headerGroupHeight}px`);
+
+        if (headerTopRow) {
+          window.requestAnimationFrame(function () {
+            document.body.style.setProperty('--top-row-height', `${headerTopRow.offsetHeight}px`);
+          });
+        }
+
+        /**
+         * Updates CSS custom properties for transparent header offset calculation
+         * Mimic updateTransparentHeaderOffset() in utilities.js
+         */
+
+        if (!hasHeaderSection || !header?.hasAttribute('transparent')) {
+          document.body.style.setProperty('--transparent-header-offset-boolean', '0');
+          return;
+        }
+
+        const hasImmediateSection = hasHeaderSection.nextElementSibling?.classList.contains('shopify-section');
+
+        const shouldApplyOffset = !hasImmediateSection ? '1' : '0';
+        document.body.style.setProperty('--transparent-header-offset-boolean', shouldApplyOffset);
+      })();
+
+      (function setHeaderMenuStyle() {
+        const headerComponent = document.querySelector('#header-component');
+        if (headerComponent) {
+          const isTouchDevice = 'ontouchstart' in window && navigator.maxTouchPoints > 0;
+          const overflowList = headerComponent?.querySelector('overflow-list');
+          const hasReachedMinimum = overflowList && overflowList.hasAttribute('minimum-reached');
+          headerComponent.dataset.menuStyle = isTouchDevice || hasReachedMinimum ? 'drawer' : 'menu';
+        }
+      })();
+    </script>
+
+    <main
+      id="MainContent"
+      class="content-for-layout"
+      role="main"
+      data-page-transition-enabled="{{ settings.page_transition_enabled }}"
+      data-product-transition="{{ settings.transition_to_main_product }}"
+      data-template="{{ template }}"
+    >
+      {{ content_for_layout }}
+    </main>
+
+    <footer>
+      {% sections 'footer-group' %}
+    </footer>
+
+    {% render 'search-modal' %}
+
+    {% if settings.quick_add or settings.mobile_quick_add %}
+      {% render 'quick-add-modal' %}
+    {% endif %}
+
+    {% if template == 'page.tips' and page.handle == 'press-on-nail-size-chart' %}
+      {% render 'nail-size-tool' %}
+    {% endif %}
+  </body>
+</html>

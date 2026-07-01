@@ -1,0 +1,206 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "Title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h2",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "var(--color-foreground)",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "email_signup_tBFDbc": {
+          "type": "email-signup",
+          "name": "t:names.email_signup",
+          "settings": {
+            "width": "fill",
+            "custom_width": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "heading": "10% discount for first subscription",
+            "heading_preset": "h6",
+            "border_style": "all",
+            "border_width": 1,
+            "border_radius": 100,
+            "input_type_preset": "paragraph",
+            "style_class": "button",
+            "display_type": "text",
+            "label": "Sign up",
+            "integrated_button": true,
+            "button_type_preset": "paragraph",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        },
+        "group_kffmK6": {
+          "type": "group",
+          "name": "swipe to see",
+          "settings": {
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "text_zjGQ6i": {
+              "type": "text",
+              "name": "t:names.heading",
+              "settings": {
+                "text": "<p>See the difference — then find your style</p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "h2",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "ai_gen_block_c24372e_TXQYpT": {
+              "type": "ai_gen_block_c24372e",
+              "name": "swipe to see",
+              "settings": {
+                "before_image": "shopify://shop_images/yourhand.webp",
+                "after_image": "shopify://shop_images/brighten-your-mood.webp",
+                "aspect_ratio": 100,
+                "desktop_width_percent": 100,
+                "border_radius": 2,
+                "initial_position": 15,
+                "divider_width": 3,
+                "divider_color": "#464646",
+                "handle_size": 50,
+                "handle_color": "#e55d8f",
+                "handle_arrow_color": "#ffffff",
+                "show_labels": true,
+                "before_label": "Swipe to See",
+                "after_label": "← With MOONLEE",
+                "label_font_size": 14,
+                "label_background": "#d9e0e4",
+                "label_text_color": "#4b4a4a",
+                "label_border_radius": 4,
+                "label_position_vertical": 20,
+                "label_position_horizontal": 20
+              },
+              "blocks": {}
+            },
+            "button_rMcD3L": {
+              "type": "button",
+              "name": "t:names.button",
+              "settings": {
+                "label": "Browse All Styles →",
+                "link": "/collections/press-on-nails",
+                "open_in_new_tab": false,
+                "style_class": "button",
+                "width": "custom",
+                "custom_width": 100,
+                "width_mobile": "custom",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "text_zjGQ6i",
+            "ai_gen_block_c24372e_TXQYpT",
+            "button_rMcD3L"
+          ]
+        }
+      },
+      "block_order": [
+        "heading",
+        "email_signup_tBFDbc",
+        "page-content",
+        "group_kffmK6"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "gap": 32,
+        "color_scheme": "",
+        "padding-block-start": 60,
+        "padding-block-end": 60
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
